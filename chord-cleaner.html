@@ -258,7 +258,14 @@ function normalizeForCheck(line) {
   return line.replace(/[.\-_()\[\]]/g, ' ').trim();
 }
 
+function isParenRepeatMarker(line) {
+  // Detects lines like (CHORUS), (PRE-CHORUS), (VERSE 2) — entire line is a parenthesized section ref
+  return /^\s*\([A-Z][A-Z\s\-]*\d*\)\s*$/i.test(line.trim());
+}
+
 function isSectionHeader(line) {
+  // Paren-wrapped repeat markers like (CHORUS) are NOT real headers — pass through as text
+  if (isParenRepeatMarker(line)) return false;
   return SECTION_PATTERN.test(normalizeForCheck(line).toUpperCase());
 }
 
@@ -268,10 +275,12 @@ function parseSectionHeader(line) {
   if (m) {
     var base = m[1].toUpperCase().replace(/\s+/g, ' ').trim();
     if (base === 'PRE CHORUS') base = 'PRE-CHORUS';
-    var num = parseInt(m[2]) || 1;
+    var num = parseInt(m[2]) || 0;
     var parenM = c.match(/\(([^)]+)\)/);
     var extra = parenM ? ' (' + parenM[1] + ')' : '';
-    return { base: base, num: num, label: (num > 1 ? base + ' ' + num : base) + extra };
+    // Keep explicit number if present (VERSE 1, VERSE 2), omit if none given
+    var label = num > 0 ? base + ' ' + num : base;
+    return { base: base, num: num || 1, label: label + extra };
   }
   return { base: c.toUpperCase(), num: 1, label: c.toUpperCase() };
 }
@@ -360,6 +369,13 @@ function cleanChart() {
 
     if (optCopyright && isCopyrightLine(line)) continue;
     if (preSection && !line.trim()) continue;
+
+    // Paren repeat markers like (CHORUS) — pass through as-is
+    if (isParenRepeatMarker(line)) {
+      if (result.length > 0 && result[result.length - 1] !== '') result.push('');
+      result.push(line.trim());
+      continue;
+    }
 
     if (isSectionHeader(line)) {
       preSection = false;
