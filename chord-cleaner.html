@@ -285,7 +285,12 @@ function isChordLine(line) {
   var valid = words.filter(function(w) {
     return CHORD_TOKEN.test(w) || extras.indexOf(w) !== -1;
   });
-  return valid.length > 0 && valid.length >= words.length * 0.55;
+  // Original dot-based detection: 55% threshold
+  if (valid.length > 0 && valid.length >= words.length * 0.55) return true;
+  // Space-based detection: if ALL tokens are valid chords (no English words)
+  // Require at least 2 tokens to avoid false positives on single words like "A" or "Am"
+  if (words.length >= 2 && valid.length === words.length) return true;
+  return false;
 }
 
 function isCopyrightLine(line) {
