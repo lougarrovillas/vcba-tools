@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chord Chart Cleaner</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --border: #2a2a2a;
+    --accent: #e8c547;
+    --accent2: #e87b47;
+    --text: #f0f0f0;
+    --muted: #666;
+    --success: #47e8a0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  .header { text-align: center; margin-bottom: 3rem; }
+  .header h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .header p {
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+  .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+  .workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  @media (max-width: 768px) { .workspace { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+  .panel-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .panel-actions { display: flex; gap: 0.5rem; }
+  textarea {
+    width: 100%;
+    height: 420px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    padding: 1.25rem;
+    resize: none;
+  }
+  textarea::placeholder { color: var(--muted); }
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+  .btn-success { background: var(--success); color: #000; }
+  .clean-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .btn-clean {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    padding: 0.9rem 2.5rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #000;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .btn-clean:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,197,71,0.3); }
+  .btn-clean:active { transform: translateY(0); }
+  .options-bar {
+    display: flex;
+    gap: 1rem;
+    padding: 0 1.5rem 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    transition: color 0.15s;
+  }
+  .option:hover { color: var(--text); }
+  .option input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; }
+  .tips {
+    max-width: 1200px;
+    margin: 2rem auto 0;
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .tip {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .tip strong { color: var(--accent); display: block; margin-bottom: 0.25rem; }
+  .vcba-tag {
+    text-align: center;
+    margin-top: 2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: #333;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">VCBA Tools</div>
+  <h1>Chord Chart Cleaner</h1>
+  <p>Paste messy chord charts &rarr; get clean PCO-ready output</p>
+</div>
+
+<div class="workspace">
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">&#x1F4CB; Paste Messy Chart</span>
+      <div class="panel-actions">
+        <button class="btn btn-ghost" onclick="clearInput()">Clear</button>
+        <button class="btn btn-ghost" onclick="loadExample()">Example</button>
+      </div>
+    </div>
+    <textarea id="input" placeholder="Paste your messy chord chart here..."></textarea>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">&#x2728; Clean Output</span>
+      <div class="panel-actions">
+        <button class="btn btn-ghost" id="copyBtn" onclick="copyOutput()">Copy</button>
+      </div>
+    </div>
+    <textarea id="output" readonly placeholder="Clean chart will appear here..."></textarea>
+  </div>
+</div>
+
+<div class="clean-bar">
+  <button class="btn-clean" onclick="cleanChart()">&#x26A1; Clean Chart</button>
+</div>
+
+<div class="options-bar">
+  <label class="option">
+    <input type="checkbox" id="opt-dots" checked>
+    Remove dots
+  </label>
+  <label class="option">
+    <input type="checkbox" id="opt-copyright" checked>
+    Remove copyright lines
+  </label>
+  <label class="option">
+    <input type="checkbox" id="opt-repeats" checked>
+    Remove chords from repeated sections
+  </label>
+  <label class="option">
+    <input type="checkbox" id="opt-headers" checked>
+    Format section headers
+  </label>
+</div>
+
+<div class="tips">
+  <div class="tip"><strong>DOTS IN LYRICS</strong>Removes dots used as chord spacers from lyrics and chord lines</div>
+  <div class="tip"><strong>REPEATED SECTIONS</strong>Strips chord lines from Verse 2, 3 etc if same as Verse 1</div>
+  <div class="tip"><strong>PCO FORMAT</strong>Output ready to paste into Planning Center Online</div>
+  <div class="tip"><strong>COPYRIGHT LINES</strong>Removes copyright notices automatically</div>
+</div>
+
+<div class="vcba-tag">VICTORY CHURCH OF THE BAY AREA &bull; TECH TEAM</div>
+
+<script>
+var SECTION_PATTERN = /^(VERSE|CHORUS|BRIDGE|INTRO|OUTRO|PRE[\s\-]?CHORUS|INTERLUDE|REFRAIN|TAG|VAMP|BREAKDOWN|INSTRUMENTAL)(\s|$|\s*\d|\s*\()/i;
+var SECTION_NAMES = /^(VERSE|CHORUS|BRIDGE|INTRO|OUTRO|PRE[\s\-]?CHORUS|INTERLUDE|REFRAIN|TAG|VAMP|BREAKDOWN|INSTRUMENTAL)\s*/i;
+var CHORD_TOKEN = /^[A-G][#b]?(maj7?|min7?|m7?|M7?|sus[24]?|add9?|dim7?|aug|\d|\/[A-G][#b]?|2)*$/;
+
+function normalizeForCheck(line) {
+  return line.replace(/[.\-_()\[\]]/g, ' ').trim();
+}
+
+function isSectionHeader(line) {
+  return SECTION_PATTERN.test(normalizeForCheck(line).toUpperCase());
+}
+
+function parseSectionHeader(line) {
+  var c = normalizeForCheck(line);
+  var m = c.match(/^(VERSE|CHORUS|BRIDGE|INTRO|OUTRO|PRE[\s\-]?CHORUS|INTERLUDE|REFRAIN|TAG|VAMP|BREAKDOWN)\s*(\d*)/i);
+  if (m) {
+    var base = m[1].toUpperCase().replace(/\s+/g, ' ').trim();
+    if (base === 'PRE CHORUS') base = 'PRE-CHORUS';
+    var num = parseInt(m[2]) || 1;
+    var parenM = c.match(/\(([^)]+)\)/);
+    var extra = parenM ? ' (' + parenM[1] + ')' : '';
+    return { base: base, num: num, label: (num > 1 ? base + ' ' + num : base) + extra };
+  }
+  return { base: c.toUpperCase(), num: 1, label: c.toUpperCase() };
+}
+
+function isChordLine(line) {
+  var c = line.replace(/[.()\[\]]/g, ' ').trim();
+  if (!c) return false;
+  var words = c.split(/\s+/).filter(function(w) { return w.length > 0; });
+  if (words.length === 0) return false;
+  var extras = ['%', '|', '||', ':||', '||:', '-'];
+  var valid = words.filter(function(w) {
+    return CHORD_TOKEN.test(w) || extras.indexOf(w) !== -1;
+  });
+  return valid.length > 0 && valid.length >= words.length * 0.55;
+}
+
+function isCopyrightLine(line) {
+  return /\u00A9|copyright|all rights reserved|used by permission|everynationmusic|ccli/i.test(line);
+}
+
+function isDotOnlyLine(line) {
+  return /^\s*\.+\s*$/.test(line);
+}
+
+function cleanDots(line) {
+  return line.replace(/\./g, ' ').replace(/\s{4,}/g, '   ').trimRight();
+}
+
+function cleanChart() {
+  var inputEl = document.getElementById('input');
+  var outputEl = document.getElementById('output');
+  var raw = inputEl.value;
+  if (!raw.trim()) return;
+
+  var optDots = document.getElementById('opt-dots').checked;
+  var optCopyright = document.getElementById('opt-copyright').checked;
+  var optRepeats = document.getElementById('opt-repeats').checked;
+  var optHeaders = document.getElementById('opt-headers').checked;
+
+  // PRE-PROCESS: fix merged lines like "singingPRE-CHORUS" or "GodEb"
+  var sectionWords = 'VERSE|CHORUS|BRIDGE|INTRO|OUTRO|PRE-CHORUS|PRE CHORUS|PRECHORUS|INTERLUDE|REFRAIN|TAG|VAMP|BREAKDOWN|INSTRUMENTAL|OUTRO';
+  var mergeRx = new RegExp('([a-z0-9,)])\\s*(' + sectionWords + ')', 'gi');
+  raw = raw.replace(mergeRx, '$1\n$2');
+
+  // Split into lines, remove dot-only lines
+  var lines = raw.split('\n').filter(function(l) { return !isDotOnlyLine(l); });
+
+  // PASS 1: catalog sections
+  var sections = [];
+  var cur = null;
+  for (var i = 0; i < lines.length; i++) {
+    var l = lines[i];
+    if (isSectionHeader(l)) {
+      if (cur) sections.push(cur);
+      var p = parseSectionHeader(l);
+      cur = { parsed: p, chords: [] };
+    } else if (cur && isChordLine(l)) {
+      cur.chords.push(l.replace(/[.()\[\]]/g, ' ').trim());
+    }
+  }
+  if (cur) sections.push(cur);
+
+  // Record first occurrence chords per section base
+  var firstChords = {};
+  for (var s = 0; s < sections.length; s++) {
+    var sec = sections[s];
+    if (!firstChords[sec.parsed.base]) {
+      firstChords[sec.parsed.base] = sec.chords.join('|');
+    }
+  }
+
+  // PASS 2: build output
+  var result = [];
+  var preSection = true;
+  var curBase = '';
+  var curNum = 1;
+  var skipChords = false;
+
+  for (var j = 0; j < lines.length; j++) {
+    var line = lines[j];
+
+    if (optCopyright && isCopyrightLine(line)) continue;
+    if (preSection && !line.trim()) continue;
+
+    if (isSectionHeader(line)) {
+      preSection = false;
+      var parsed = parseSectionHeader(line);
+      curBase = parsed.base;
+      curNum = parsed.num;
+      skipChords = false;
+
+      if (optRepeats && curNum > 1) {
+        var matchSec = null;
+        for (var k = 0; k < sections.length; k++) {
+          if (sections[k].parsed.base === curBase && sections[k].parsed.num === curNum) {
+            matchSec = sections[k];
+            break;
+          }
+        }
+        if (matchSec && matchSec.chords.join('|') === firstChords[curBase]) {
+          skipChords = true;
+        }
+      }
+
+      if (optHeaders) {
+        if (result.length > 0 && result[result.length - 1] !== '') result.push('');
+        result.push(parsed.label.toUpperCase());
+      } else {
+        result.push(normalizeForCheck(line));
+      }
+      // Check for inline chords on same line as header e.g. "INTRO ||: B | B :||"
+      var remainder = normalizeForCheck(line).replace(SECTION_NAMES, '').trim();
+      if (remainder && (isChordLine(remainder) || /^[\|:]/.test(remainder))) {
+        if (!(skipChords && optRepeats)) {
+          result.push(cleanDots(remainder));
+        }
+      }
+      continue;
+    }
+
+    if (isChordLine(line)) {
+      if (skipChords && optRepeats) continue;
+      result.push(optDots ? cleanDots(line) : line);
+      continue;
+    }
+
+    var trimmed = line.trim();
+    if (trimmed) {
+      result.push(optDots ? cleanDots(line) : line.trimRight());
+    } else {
+      result.push('');
+    }
+  }
+
+  // Clean up multiple blank lines
+  var final = [];
+  var blanks = 0;
+  for (var r = 0; r < result.length; r++) {
+    if (result[r].trim() === '') {
+      blanks++;
+      if (blanks <= 1) final.push('');
+    } else {
+      blanks = 0;
+      final.push(result[r]);
+    }
+  }
+  while (final.length > 0 && final[final.length - 1].trim() === '') final.pop();
+
+  outputEl.value = final.join('\n');
+}
+
+function copyOutput() {
+  var output = document.getElementById('output').value;
+  if (!output) return;
+  navigator.clipboard.writeText(output).then(function() {
+    var btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('btn-success');
+    btn.classList.remove('btn-ghost');
+    setTimeout(function() {
+      btn.textContent = 'Copy';
+      btn.classList.remove('btn-success');
+      btn.classList.add('btn-ghost');
+    }, 2000);
+  });
+}
+
+function clearInput() {
+  document.getElementById('input').value = '';
+  document.getElementById('output').value = '';
+}
+
+function loadExample() {
+  document.getElementById('input').value = 'VERSE.1:\n.......A.................D\nYour.mercy.is.upon.us.forever\n.....F#m.................D\nLike.waves.upon.the.shore\n.\n.\nCHORUS:\n.........A.....D\nYou.are.good.always.(repeat)\nVERSE.2:\nYour.thoughts.are.always.for.us\n.D\nUnending\n\u00A9 Victory Worship 2018. All rights reserved.';
+  setTimeout(cleanChart, 100);
+}
+
+// Auto-clean on paste
+document.getElementById('input').addEventListener('paste', function() {
+  setTimeout(cleanChart, 150);
+});
+</script>
+</body>
+</html>
