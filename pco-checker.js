@@ -1,12 +1,24 @@
 // VCBA PCO Sunday Readiness Checker
 // Runs Wed (verses), Thu (songs), Fri (SC summary), Sat (files)
-// Sends PCO messages directly to assigned people
+// Posts to Discord + sends PCO message to SC
 
 const PCO_APP_ID = process.env.PCO_APP_ID;
 const PCO_SECRET = process.env.PCO_SECRET;
+const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
 const SERVICE_TYPE_ID = "1723712";
 
 const authHeader = "Basic " + Buffer.from(`${PCO_APP_ID}:${PCO_SECRET}`).toString("base64");
+
+async function sendDiscord(message) {
+  if (!DISCORD_WEBHOOK) { console.warn("No Discord webhook set"); return; }
+  const res = await fetch(DISCORD_WEBHOOK, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content: message }),
+  });
+  if (!res.ok) console.warn(`Discord failed: ${res.status}`);
+  else console.log("Discord message sent");
+}
 
 async function pcoGet(path) {
   const res = await fetch(`https://api.planningcenteronline.com/services/v2${path}`, {
@@ -16,233 +28,155 @@ async function pcoGet(path) {
   return res.json();
 }
 
-async function sendPCOMessage(personId, subject, body) {
-  const payload = {
-    data: {
-      type: "Message",
-      attributes: { subject, body, to_person_id: personId }
-    }
-  };
-  const res = await fetch(`https://api.planningcenteronline.com/services/v2/messages`, {
-    method: "POST",
-    headers: { Authorization: authHeader, "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    console.warn(`⚠️ Message to person ${personId} failed: ${err}`);
-  } else {
-    console.log(`✅ Message sent to person ID ${personId}`);
-  }
-}
-
-// Get the next upcoming Sunday plan
 async function getUpcomingSundayPlan() {
-  const today = new Date();
   const data = await pcoGet(`/service_types/${SERVICE_TYPE_ID}/plans?filter=future&order=sort_date&per_page=5`);
   const plans = data.data;
   if (!plans || plans.length === 0) throw new Error("No upcoming plans found");
-  // Return the soonest upcoming plan
   return plans[0];
 }
 
-// Get all plan items for a plan
 async function getPlanItems(planId) {
   const data = await pcoGet(`/service_types/${SERVICE_TYPE_ID}/plans/${planId}/items?per_page=100`);
   return data.data;
 }
 
-// Get team members assigned to a plan (for Speakers team)
 async function getPlanTeamMembers(planId) {
   const data = await pcoGet(`/service_types/${SERVICE_TYPE_ID}/plans/${planId}/team_members?per_page=100`);
   return data.data;
 }
 
-// Get attachments/files for a plan
 async function getPlanAttachments(planId) {
   const data = await pcoGet(`/service_types/${SERVICE_TYPE_ID}/plans/${planId}/attachments?per_page=100`);
   return data.data;
 }
 
-// Get SC person ID - finds person with COORDINATOR position in Service Coordinators team
-async function getSCPersonId(planId) {
-  const members = await getPlanTeamMembers(planId);
-  // Log all position names to help debug
-  console.log("📋 All team positions:", members.map(m => `${m.attributes.team_position_name} (team: ${m.attributes.team_name})`).join(", "));
-  // Debug: log the full coordinator member object
-  const coordMember = members.find(m => (m.attributes.team_position_name || "").toLowerCase() === "coordinator");
-  if (coordMember) {
-    console.log("🔍 Coordinator member full attributes:", JSON.stringify(coordMember.attributes));
-    console.log("🔍 Coordinator member relationships:", JSON.stringify(coordMember.relationships));
-  }
-  const sc = members.find(m => {
-    const pos = (m.attributes.team_position_name || "").toLowerCase();
-    return pos === "coordinator";
-  });
-  return sc ? (sc.relationships?.person?.data?.id || sc.attributes.person_id) : null;
+function getSCName(members) {
+  const sc = members.find(m => (m.attributes.team_position_name || "").toLowerCase() === "coordinator");
+  return sc ? sc.attributes.name : "SC";
 }
 
-// Find person assigned to a specific role in Speakers team
-function findPersonForRole(teamMembers, roleKeywords) {
-  const member = teamMembers.find(m => {
-    const pos = (m.attributes.team_position_name || "").toLowerCase();
-    return roleKeywords.some(kw => pos === kw.toLowerCase());
-  });
-  return member ? (member.relationships?.person?.data?.id || member.attributes.person_id) : null;
+async function getSCPersonId(members) {
+  const sc = members.find(m => (m.attributes.team_position_name || "").toLowerCase() === "coordinator");
+  if (!sc) return null;
+  const personId = sc.relationships && sc.relationships.person && sc.relationships.person.data ? sc.relationships.person.data.id : null;
+  console.log("SC found: " + (sc.attributes.name || "Unknown") + " (ID: " + personId + ")");
+  return personId;
 }
 
-// Check if item description still has [verse] placeholder
 function hasVersePlaceholder(item) {
-  const desc = item.attributes.description || "";
-  return desc.includes("[verse]") || desc.includes("[ verse ]") || desc.trim() === "";
+  const desc = (item.attributes.description || "").toLowerCase();
+  return desc.includes("[verse]") || desc.trim() === "";
 }
 
-// Check if item title matches keywords
 function itemMatches(item, keywords) {
   const title = (item.attributes.title || "").toLowerCase();
   return keywords.some(kw => title.includes(kw));
 }
 
 async function runWednesdayCheck(plan, items, teamMembers) {
-  console.log("\n📅 WEDNESDAY CHECK — Verses due today");
-  const verseItems = [
-    { keywords: ["call to worship", "c2w"], roleKeywords: ["call to worship"], label: "Call to Worship" },
-    { keywords: ["tithes", "offering"], roleKeywords: ["tithes & offering", "tithes and offering", "tithes"], label: "Tithes & Offering" },
-    { keywords: ["benediction"], roleKeywords: ["word"], label: "Benediction" },
-  ];
+  console.log("WEDNESDAY CHECK - Verses due today");
+  const planDate = (plan.attributes.sort_date || "").split("T")[0] || "this Sunday";
+  const scName = getSCName(teamMembers);
 
-  for (const vi of verseItems) {
-    const item = items.find(i => itemMatches(i, vi.keywords));
-    if (!item) { console.log(`⚠️ Could not find plan item: ${vi.label}`); continue; }
-
-    if (hasVersePlaceholder(item)) {
-      console.log(`❌ ${vi.label} — verse not filled`);
-      // Find assigned person dynamically
-      let personId = findPersonForRole(teamMembers, vi.roleKeywords);
-      // Benediction defaults to Pastor Neil (Word role)
-      if (!personId && vi.label === "Benediction") {
-        personId = findPersonForRole(teamMembers, ["word", "pastor", "speaker"]);
-      }
-      if (personId) {
-        await sendPCOMessage(
-          personId,
-          `⚠️ VCBA: ${vi.label} Verse Needed`,
-          `Hi! Just a reminder that the verse for **${vi.label}** in this Sunday's service plan still has a placeholder.\n\nPlease update it in Planning Center by end of day today (Wednesday).\n\nThank you! 🙏\n— VCBA Tech`
-        );
-      } else {
-        console.warn(`⚠️ No person found for ${vi.label}`);
-      }
-    } else {
-      console.log(`✅ ${vi.label} — verse filled`);
-    }
-  }
-}
-
-async function runThursdayCheck(plan, items, teamMembers, scPersonId) {
-  console.log("\n📅 THURSDAY CHECK — Songs due today");
-  // Songs are items of type "song" in PCO
-  const songItems = items.filter(i => i.attributes.item_type === "song");
-  console.log(`Found ${songItems.length} songs in plan`);
-
-  if (songItems.length < 4) {
-    console.log(`❌ Only ${songItems.length}/4 songs entered`);
-    if (scPersonId) {
-      await sendPCOMessage(
-        scPersonId,
-        `⚠️ VCBA: Songs Not Complete`,
-        `Hi! The worship song list for this Sunday is not yet complete.\n\nCurrently: ${songItems.length}/4 songs entered in Planning Center.\n\nPlease add the remaining songs by end of day today (Thursday).\n\nThank you! 🙏\n— VCBA Tech`
-      );
-    }
-  } else {
-    console.log(`✅ All 4 songs entered`);
-  }
-}
-
-async function runFridayCheck(plan, items, teamMembers, scPersonId) {
-  console.log("\n📅 FRIDAY CHECK — Status summary to SC");
-
-  // Check verses
   const verseChecks = [
     { keywords: ["call to worship", "c2w"], label: "Call to Worship" },
-    { keywords: ["tithes", "offering", "t&o"], label: "Tithes & Offering" },
+    { keywords: ["tithes", "offering"], label: "Tithes & Offering" },
+    { keywords: ["benediction"], label: "Benediction" },
+  ];
+
+  let status = "";
+  let anyMissing = false;
+  for (const vc of verseChecks) {
+    const item = items.find(i => itemMatches(i, vc.keywords));
+    const missing = !item || hasVersePlaceholder(item);
+    if (missing) anyMissing = true;
+    status += (missing ? "X" : "OK") + " " + vc.label + "\n";
+    console.log((missing ? "MISSING" : "OK") + " - " + vc.label);
+  }
+
+  const msg = "VCBA Sunday Readiness - " + planDate + "\nWednesday Verse Check:\n" + status
+    + (anyMissing ? "\nSC (" + scName + "): Please follow up on missing verses." : "\nAll verses filled!");
+
+  await sendDiscord(msg);
+}
+
+async function runThursdayCheck(plan, items, teamMembers) {
+  console.log("THURSDAY CHECK - Songs due today");
+  const planDate = (plan.attributes.sort_date || "").split("T")[0] || "this Sunday";
+  const scName = getSCName(teamMembers);
+
+  const songItems = items.filter(i => i.attributes.item_type === "song");
+  const count = songItems.length;
+  console.log("Songs found: " + count + "/4");
+
+  const msg = "VCBA Sunday Readiness - " + planDate + "\nThursday Song Check:\n"
+    + (count >= 4 ? "OK" : "MISSING") + " Songs: " + count + "/4\n"
+    + (count < 4 ? "\nSC (" + scName + "): " + (4 - count) + " song(s) still missing. Please update PCO." : "\nAll 4 songs entered!");
+
+  await sendDiscord(msg);
+}
+
+async function runFridayCheck(plan, items, teamMembers) {
+  console.log("FRIDAY CHECK - Full status summary");
+  const planDate = (plan.attributes.sort_date || "").split("T")[0] || "this Sunday";
+  const scName = getSCName(teamMembers);
+
+  const verseChecks = [
+    { keywords: ["call to worship", "c2w"], label: "Call to Worship" },
+    { keywords: ["tithes", "offering"], label: "Tithes & Offering" },
     { keywords: ["benediction"], label: "Benediction" },
   ];
 
   let verseStatus = "";
+  let versesMissing = false;
   for (const vc of verseChecks) {
     const item = items.find(i => itemMatches(i, vc.keywords));
-    const filled = item && !hasVersePlaceholder(item);
-    verseStatus += `${filled ? "✅" : "❌"} ${vc.label}\n`;
+    const missing = !item || hasVersePlaceholder(item);
+    if (missing) versesMissing = true;
+    verseStatus += (missing ? "X" : "OK") + " " + vc.label + "\n";
   }
 
-  // Check songs
   const songItems = items.filter(i => i.attributes.item_type === "song");
-  const songsStatus = `${songItems.length >= 4 ? "✅" : "❌"} Songs (${songItems.length}/4)`;
+  const songCount = songItems.length;
+  const allGood = !versesMissing && songCount >= 4;
 
-  const planDate = plan.attributes.sort_date?.split("T")[0] || "this Sunday";
-  const allGood = !verseStatus.includes("❌") && songItems.length >= 4;
+  const msg = "VCBA Sunday Readiness - " + planDate + "\nFriday Full Status (SC: " + scName + ")\n\n"
+    + "VERSES:\n" + verseStatus + "\n"
+    + "SONGS: " + (songCount >= 4 ? "OK" : "MISSING") + " " + songCount + "/4\n\n"
+    + (allGood ? "All good! Ready for Sunday." : "Some items still need attention before Sunday.");
 
-  const message = `📋 VCBA Weekly Status — ${planDate}\n\n`
-    + `VERSES:\n${verseStatus}\n`
-    + `SONGS:\n${songsStatus}\n\n`
-    + (allGood
-      ? "✅ Everything looks good! Great job team 🎉"
-      : "⚠️ Some items still need attention. Please follow up with the assigned persons.");
-
-  if (scPersonId) {
-    await sendPCOMessage(scPersonId, `📋 VCBA Sunday Readiness — ${planDate}`, message);
-  } else {
-    console.warn("⚠️ SC person not found — could not send Friday summary");
-  }
-  console.log("Friday summary sent to SC");
+  await sendDiscord(msg);
 }
 
 async function runSaturdayCheck(plan, items, teamMembers) {
-  console.log("\n📅 SATURDAY CHECK — Files due by 2PM");
+  console.log("SATURDAY CHECK - Files due by 2PM");
+  const planDate = (plan.attributes.sort_date || "").split("T")[0] || "this Sunday";
 
   const attachments = await getPlanAttachments(plan.id);
   const attachmentNames = attachments.map(a => (a.attributes.filename || "").toLowerCase());
+  console.log("Attachments found: " + attachments.length);
 
-  // Check for announcement graphics
   const hasAnnouncements = attachmentNames.some(n =>
     n.includes("announcement") || n.includes("graphic") || n.includes("bulletin")
   );
-
-  // Check for sermon notes/slides
   const hasSermonFiles = attachmentNames.some(n =>
     n.includes("sermon") || n.includes("notes") || n.includes(".pptx") || n.includes(".pdf") || n.includes("slides")
   );
 
-  // Find Pastor Neil's person ID
-  const pastorPersonId = findPersonForRole(teamMembers, ["word", "pastor", "speaker"]);
+  const msg = "VCBA Sunday Readiness - " + planDate + "\nSaturday File Check (due by 2PM):\n"
+    + (hasAnnouncements ? "OK" : "MISSING") + " Announcement graphics\n"
+    + (hasSermonFiles ? "OK" : "MISSING") + " Sermon notes/slides\n\n"
+    + (!hasAnnouncements || !hasSermonFiles
+      ? "Pastor Neil: Missing files need to be uploaded to PCO by 2PM today."
+      : "All files uploaded! Ready for Sunday.");
 
-  let missing = [];
-  if (!hasAnnouncements) missing.push("Announcement graphics");
-  if (!hasSermonFiles) missing.push("Sermon notes/slides");
-
-  if (missing.length > 0) {
-    console.log(`❌ Missing files: ${missing.join(", ")}`);
-    if (pastorPersonId) {
-      await sendPCOMessage(
-        pastorPersonId,
-        `⚠️ VCBA: Files Needed by 2PM Today`,
-        `Hi Pastor Neil! The following files are still missing from this Sunday's plan:\n\n`
-          + missing.map(m => `• ${m}`).join("\n")
-          + `\n\nPlease upload them to Planning Center by 2:00 PM today.\n\nThank you! 🙏\n— VCBA Tech`
-      );
-    }
-  } else {
-    console.log("✅ All files uploaded");
-  }
+  await sendDiscord(msg);
 }
 
 async function main() {
-  const day = new Date().getDay(); // 0=Sun, 1=Mon, ..., 3=Wed, 4=Thu, 5=Fri, 6=Sat
-  // For testing, you can override: const day = parseInt(process.env.DAY_OVERRIDE || new Date().getDay());
   const dayOverride = process.env.DAY_OVERRIDE;
-  const runDay = dayOverride !== undefined ? parseInt(dayOverride) : day;
-
-  console.log(`🕐 Running PCO checker — day ${runDay}`);
+  const runDay = (dayOverride !== undefined && dayOverride !== "") ? parseInt(dayOverride) : new Date().getDay();
+  console.log("Running PCO checker - day " + runDay);
 
   if (![3, 4, 5, 6].includes(runDay)) {
     console.log("Not a scheduled check day. Exiting.");
@@ -250,24 +184,24 @@ async function main() {
   }
 
   const plan = await getUpcomingSundayPlan();
-  console.log(`📋 Next plan: ${plan.attributes.title} — ${plan.attributes.sort_date}`);
+  console.log("Next plan: " + plan.attributes.title + " - " + plan.attributes.sort_date);
 
   const items = await getPlanItems(plan.id);
   const teamMembers = await getPlanTeamMembers(plan.id);
-  const scPersonId = await getSCPersonId(plan.id);
+  const scPersonId = await getSCPersonId(teamMembers);
 
-  console.log(`👥 Team members found: ${teamMembers.length}`);
-  console.log(`🎵 SC Person ID: ${scPersonId || "NOT FOUND"}`);
+  console.log("Team members found: " + teamMembers.length);
+  if (!scPersonId) console.warn("SC not found in plan");
 
   if (runDay === 3) await runWednesdayCheck(plan, items, teamMembers);
-  if (runDay === 4) await runThursdayCheck(plan, items, teamMembers, scPersonId);
-  if (runDay === 5) await runFridayCheck(plan, items, teamMembers, scPersonId);
+  if (runDay === 4) await runThursdayCheck(plan, items, teamMembers);
+  if (runDay === 5) await runFridayCheck(plan, items, teamMembers);
   if (runDay === 6) await runSaturdayCheck(plan, items, teamMembers);
 
-  console.log("\n✅ PCO Checker complete");
+  console.log("PCO Checker complete");
 }
 
 main().catch(err => {
-  console.error("❌ Error:", err.message);
+  console.error("Error: " + err.message);
   process.exit(1);
 });
