@@ -69,11 +69,17 @@ async function getSCPersonId(planId) {
   const members = await getPlanTeamMembers(planId);
   // Log all position names to help debug
   console.log("📋 All team positions:", members.map(m => `${m.attributes.team_position_name} (team: ${m.attributes.team_name})`).join(", "));
+  // Debug: log the full coordinator member object
+  const coordMember = members.find(m => (m.attributes.team_position_name || "").toLowerCase() === "coordinator");
+  if (coordMember) {
+    console.log("🔍 Coordinator member full attributes:", JSON.stringify(coordMember.attributes));
+    console.log("🔍 Coordinator member relationships:", JSON.stringify(coordMember.relationships));
+  }
   const sc = members.find(m => {
     const pos = (m.attributes.team_position_name || "").toLowerCase();
     return pos === "coordinator";
   });
-  return sc ? sc.attributes.person_id : null;
+  return sc ? (sc.relationships?.person?.data?.id || sc.attributes.person_id) : null;
 }
 
 // Find person assigned to a specific role in Speakers team
@@ -82,7 +88,7 @@ function findPersonForRole(teamMembers, roleKeywords) {
     const pos = (m.attributes.team_position_name || "").toLowerCase();
     return roleKeywords.some(kw => pos === kw.toLowerCase());
   });
-  return member ? member.attributes.person_id : null;
+  return member ? (member.relationships?.person?.data?.id || member.attributes.person_id) : null;
 }
 
 // Check if item description still has [verse] placeholder
