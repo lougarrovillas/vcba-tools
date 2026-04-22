@@ -2,13 +2,9 @@ name: VCBA PCO Sunday Readiness Checker
 
 on:
   schedule:
-    # Wednesday 9PM PT (Thu 5AM UTC)
     - cron: "0 5 * * 4"
-    # Thursday 9PM PT (Fri 5AM UTC)
     - cron: "0 5 * * 5"
-    # Friday 9PM PT (Sat 5AM UTC)
     - cron: "0 5 * * 6"
-    # Saturday 9PM PT (Sun 5AM UTC) — catches files before Sunday
     - cron: "0 5 * * 0"
   workflow_dispatch:
     inputs:
@@ -29,10 +25,14 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install dependencies
+        run: npm install nodemailer
+
       - name: Run PCO Checker
         env:
           PCO_APP_ID: ${{ secrets.PCO_APP_ID }}
           PCO_SECRET: ${{ secrets.PCO_SECRET }}
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           DAY_OVERRIDE: ${{ github.event.inputs.day_override }}
         run: node pco-checker.js
