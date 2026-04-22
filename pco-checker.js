@@ -1,14 +1,43 @@
 // VCBA PCO Sunday Readiness Checker
 // Runs Wed (verses), Thu (songs), Fri (SC summary), Sat (files)
-// Posts to Discord + sends PCO message to SC
+// Posts to Discord + sends email to SC via Gmail
 
 const PCO_APP_ID = process.env.PCO_APP_ID;
 const PCO_SECRET = process.env.PCO_SECRET;
 const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
+const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD;
+const GMAIL_FROM = "victorywebteam@gmail.com";
 const SERVICE_TYPE_ID = "1723712";
 
 const authHeader = "Basic " + Buffer.from(`${PCO_APP_ID}:${PCO_SECRET}`).toString("base64");
 
+// ── Email via Gmail SMTP ─────────────────────────────────
+async function sendEmail(toEmail, subject, body) {
+  if (!GMAIL_APP_PASSWORD) { console.warn("No Gmail password set"); return; }
+
+  const nodemailer = await import("nodemailer");
+  const transporter = nodemailer.default.createTransport({
+    service: "gmail",
+    auth: {
+      user: GMAIL_FROM,
+      pass: GMAIL_APP_PASSWORD,
+    },
+  });
+
+  try {
+    await transporter.sendMail({
+      from: `"VCBA Tech" <${GMAIL_FROM}>`,
+      to: toEmail,
+      subject,
+      text: body,
+    });
+    console.log("✅ Email sent to " + toEmail);
+  } catch (err) {
+    console.warn("⚠️ Email failed: " + err.message);
+  }
+}
+
+// ── Discord ──────────────────────────────────────────────
 async function sendDiscord(message) {
   if (!DISCORD_WEBHOOK) { console.warn("No Discord webhook set"); return; }
   const res = await fetch(DISCORD_WEBHOOK, {
@@ -16,15 +45,29 @@ async function sendDiscord(message) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ content: message }),
   });
-  if (!res.ok) console.warn(`Discord failed: ${res.status}`);
-  else console.log("Discord message sent");
+  if (!res.ok) console.warn("Discord failed: " + res.status);
+  else console.log("✅ Discord message sent");
 }
 
+async function notify(toEmail, subject, body) {
+  await sendDiscord(body);
+  if (toEmail) await sendEmail(toEmail, subject, body);
+}
+
+// ── PCO Helpers ──────────────────────────────────────────
 async function pcoGet(path) {
   const res = await fetch(`https://api.planningcenteronline.com/services/v2${path}`, {
     headers: { Authorization: authHeader, "Content-Type": "application/json" },
   });
   if (!res.ok) throw new Error(`PCO GET ${path} failed: ${res.status} ${await res.text()}`);
+  return res.json();
+}
+
+async function pcoGetPeople(path) {
+  const res = await fetch(`https://api.planningcenteronline.com/people/v2${path}`, {
+    headers: { Authorization: authHeader, "Content-Type": "application/json" },
+  });
+  if (!res.ok) throw new Error(`PCO People GET ${path} failed: ${res.status}`);
   return res.json();
 }
 
@@ -50,17 +93,23 @@ async function getPlanAttachments(planId) {
   return data.data;
 }
 
-function getSCName(members) {
-  const sc = members.find(m => (m.attributes.team_position_name || "").toLowerCase() === "coordinator");
-  return sc ? sc.attributes.name : "SC";
+async function getSCEmail(personId) {
+  try {
+    const data = await pcoGetPeople(`/people/${personId}/emails`);
+    const primary = data.data.find(e => e.attributes.primary) || data.data[0];
+    return primary ? primary.attributes.address : null;
+  } catch (err) {
+    console.warn("Could not get SC email: " + err.message);
+    return null;
+  }
 }
 
-async function getSCPersonId(members) {
+function getSCInfo(members) {
   const sc = members.find(m => (m.attributes.team_position_name || "").toLowerCase() === "coordinator");
-  if (!sc) return null;
-  const personId = sc.relationships && sc.relationships.person && sc.relationships.person.data ? sc.relationships.person.data.id : null;
-  console.log("SC found: " + (sc.attributes.name || "Unknown") + " (ID: " + personId + ")");
-  return personId;
+  if (!sc) return { name: "SC", personId: null };
+  const personId = sc.relationships && sc.relationships.person && sc.relationships.person.data
+    ? sc.relationships.person.data.id : null;
+  return { name: sc.attributes.name || "SC", personId };
 }
 
 function hasVersePlaceholder(item) {
@@ -73,10 +122,19 @@ function itemMatches(item, keywords) {
   return keywords.some(kw => title.includes(kw));
 }
 
-async function runWednesdayCheck(plan, items, teamMembers) {
+function buildHeader(plan) {
+  const planDate = plan.attributes.dates || (plan.attributes.sort_date || "").split("T")[0];
+  const seriesTitle = plan.attributes.series_title || "";
+  const weekTitle = plan.attributes.title || "";
+  const planUrl = "https://services.planningcenteronline.com/plans/" + plan.id;
+  return { planDate, seriesTitle, weekTitle, planUrl };
+}
+
+// ── Day Checks ───────────────────────────────────────────
+async function runWednesdayCheck(plan, items, teamMembers, scEmail) {
   console.log("WEDNESDAY CHECK - Verses due today");
-  const planDate = (plan.attributes.sort_date || "").split("T")[0] || "this Sunday";
-  const scName = getSCName(teamMembers);
+  const { planDate, seriesTitle, weekTitle, planUrl } = buildHeader(plan);
+  const { name: scName } = getSCInfo(teamMembers);
 
   const verseChecks = [
     { keywords: ["call to worship", "c2w"], label: "Call to Worship" },
@@ -90,36 +148,48 @@ async function runWednesdayCheck(plan, items, teamMembers) {
     const item = items.find(i => itemMatches(i, vc.keywords));
     const missing = !item || hasVersePlaceholder(item);
     if (missing) anyMissing = true;
-    status += (missing ? "X" : "OK") + " " + vc.label + "\n";
+    status += (missing ? "❌" : "✅") + " " + vc.label + "\n";
     console.log((missing ? "MISSING" : "OK") + " - " + vc.label);
   }
 
-  const msg = "VCBA Sunday Readiness - " + planDate + "\nWednesday Verse Check:\n" + status
-    + (anyMissing ? "\nSC (" + scName + "): Please follow up on missing verses." : "\nAll verses filled!");
+  const subject = "📖 VCBA Wednesday Verse Check — " + planDate;
+  const body = "📋 VCBA Sunday Readiness\n"
+    + (seriesTitle ? seriesTitle + " - " : "") + weekTitle + " | " + planDate + "\n"
+    + planUrl + "\n\n"
+    + "📖 Wednesday Verse Check:\n" + status + "\n"
+    + (anyMissing
+      ? "⚠️ SC (" + scName + "): Please follow up on missing verses."
+      : "✅ All verses filled! Great job.");
 
-  await sendDiscord(msg);
+  await notify(scEmail, subject, body);
 }
 
-async function runThursdayCheck(plan, items, teamMembers) {
+async function runThursdayCheck(plan, items, teamMembers, scEmail) {
   console.log("THURSDAY CHECK - Songs due today");
-  const planDate = (plan.attributes.sort_date || "").split("T")[0] || "this Sunday";
-  const scName = getSCName(teamMembers);
+  const { planDate, seriesTitle, weekTitle, planUrl } = buildHeader(plan);
+  const { name: scName } = getSCInfo(teamMembers);
 
   const songItems = items.filter(i => i.attributes.item_type === "song");
   const count = songItems.length;
   console.log("Songs found: " + count + "/4");
 
-  const msg = "VCBA Sunday Readiness - " + planDate + "\nThursday Song Check:\n"
-    + (count >= 4 ? "OK" : "MISSING") + " Songs: " + count + "/4\n"
-    + (count < 4 ? "\nSC (" + scName + "): " + (4 - count) + " song(s) still missing. Please update PCO." : "\nAll 4 songs entered!");
+  const subject = "🎵 VCBA Thursday Song Check — " + planDate;
+  const body = "📋 VCBA Sunday Readiness\n"
+    + (seriesTitle ? seriesTitle + " - " : "") + weekTitle + " | " + planDate + "\n"
+    + planUrl + "\n\n"
+    + "🎵 Thursday Song Check:\n"
+    + (count >= 4 ? "✅" : "❌") + " Songs: " + count + "/4\n\n"
+    + (count < 4
+      ? "⚠️ SC (" + scName + "): " + (4 - count) + " song(s) still missing. Please update PCO."
+      : "✅ All 4 songs entered!");
 
-  await sendDiscord(msg);
+  await notify(scEmail, subject, body);
 }
 
-async function runFridayCheck(plan, items, teamMembers) {
+async function runFridayCheck(plan, items, teamMembers, scEmail) {
   console.log("FRIDAY CHECK - Full status summary");
-  const planDate = (plan.attributes.sort_date || "").split("T")[0] || "this Sunday";
-  const scName = getSCName(teamMembers);
+  const { planDate, seriesTitle, weekTitle, planUrl } = buildHeader(plan);
+  const { name: scName } = getSCInfo(teamMembers);
 
   const verseChecks = [
     { keywords: ["call to worship", "c2w"], label: "Call to Worship" },
@@ -133,28 +203,34 @@ async function runFridayCheck(plan, items, teamMembers) {
     const item = items.find(i => itemMatches(i, vc.keywords));
     const missing = !item || hasVersePlaceholder(item);
     if (missing) versesMissing = true;
-    verseStatus += (missing ? "X" : "OK") + " " + vc.label + "\n";
+    verseStatus += (missing ? "❌" : "✅") + " " + vc.label + "\n";
   }
 
   const songItems = items.filter(i => i.attributes.item_type === "song");
   const songCount = songItems.length;
   const allGood = !versesMissing && songCount >= 4;
 
-  const msg = "VCBA Sunday Readiness - " + planDate + "\nFriday Full Status (SC: " + scName + ")\n\n"
-    + "VERSES:\n" + verseStatus + "\n"
-    + "SONGS: " + (songCount >= 4 ? "OK" : "MISSING") + " " + songCount + "/4\n\n"
-    + (allGood ? "All good! Ready for Sunday." : "Some items still need attention before Sunday.");
+  const subject = "📋 VCBA Friday Status — " + planDate;
+  const body = "📋 VCBA Sunday Readiness\n"
+    + (seriesTitle ? seriesTitle + " - " : "") + weekTitle + " | " + planDate + "\n"
+    + planUrl + "\n\n"
+    + "Friday Full Status (SC: " + scName + ")\n\n"
+    + "📖 Verses:\n" + verseStatus + "\n"
+    + "🎵 Songs: " + (songCount >= 4 ? "✅" : "❌") + " " + songCount + "/4\n\n"
+    + (allGood
+      ? "✅ Everything looks good! Ready for Sunday 🎉"
+      : "⚠️ Some items still need attention before Sunday.");
 
-  await sendDiscord(msg);
+  await notify(scEmail, subject, body);
 }
 
-async function runSaturdayCheck(plan, items, teamMembers) {
+async function runSaturdayCheck(plan, items, teamMembers, scEmail) {
   console.log("SATURDAY CHECK - Files due by 2PM");
-  const planDate = (plan.attributes.sort_date || "").split("T")[0] || "this Sunday";
+  const { planDate, seriesTitle, weekTitle, planUrl } = buildHeader(plan);
 
   const attachments = await getPlanAttachments(plan.id);
   const attachmentNames = attachments.map(a => (a.attributes.filename || "").toLowerCase());
-  console.log("Attachments found: " + attachments.length);
+  console.log("Attachments: " + attachments.length);
 
   const hasAnnouncements = attachmentNames.some(n =>
     n.includes("announcement") || n.includes("graphic") || n.includes("bulletin")
@@ -163,16 +239,21 @@ async function runSaturdayCheck(plan, items, teamMembers) {
     n.includes("sermon") || n.includes("notes") || n.includes(".pptx") || n.includes(".pdf") || n.includes("slides")
   );
 
-  const msg = "VCBA Sunday Readiness - " + planDate + "\nSaturday File Check (due by 2PM):\n"
-    + (hasAnnouncements ? "OK" : "MISSING") + " Announcement graphics\n"
-    + (hasSermonFiles ? "OK" : "MISSING") + " Sermon notes/slides\n\n"
+  const subject = "📢 VCBA Saturday File Check — " + planDate;
+  const body = "📋 VCBA Sunday Readiness\n"
+    + (seriesTitle ? seriesTitle + " - " : "") + weekTitle + " | " + planDate + "\n"
+    + planUrl + "\n\n"
+    + "📢 Saturday File Check (due by 2PM):\n"
+    + (hasAnnouncements ? "✅" : "❌") + " Announcement graphics\n"
+    + (hasSermonFiles ? "✅" : "❌") + " Sermon notes/slides\n\n"
     + (!hasAnnouncements || !hasSermonFiles
-      ? "Pastor Neil: Missing files need to be uploaded to PCO by 2PM today."
-      : "All files uploaded! Ready for Sunday.");
+      ? "⚠️ Pastor Neil: Missing files need to be uploaded to PCO by 2PM today."
+      : "✅ All files uploaded! Ready for Sunday.");
 
-  await sendDiscord(msg);
+  await notify(scEmail, subject, body);
 }
 
+// ── Main ─────────────────────────────────────────────────
 async function main() {
   const dayOverride = process.env.DAY_OVERRIDE;
   const runDay = (dayOverride !== undefined && dayOverride !== "") ? parseInt(dayOverride) : new Date().getDay();
@@ -188,15 +269,22 @@ async function main() {
 
   const items = await getPlanItems(plan.id);
   const teamMembers = await getPlanTeamMembers(plan.id);
-  const scPersonId = await getSCPersonId(teamMembers);
+  const { name: scName, personId: scPersonId } = getSCInfo(teamMembers);
 
-  console.log("Team members found: " + teamMembers.length);
-  if (!scPersonId) console.warn("SC not found in plan");
+  console.log("Team members: " + teamMembers.length);
+  console.log("SC: " + scName + " (ID: " + scPersonId + ")");
 
-  if (runDay === 3) await runWednesdayCheck(plan, items, teamMembers);
-  if (runDay === 4) await runThursdayCheck(plan, items, teamMembers);
-  if (runDay === 5) await runFridayCheck(plan, items, teamMembers);
-  if (runDay === 6) await runSaturdayCheck(plan, items, teamMembers);
+  // Get SC email from PCO People API
+  let scEmail = null;
+  if (scPersonId) {
+    scEmail = await getSCEmail(scPersonId);
+    console.log("SC Email: " + (scEmail || "NOT FOUND"));
+  }
+
+  if (runDay === 3) await runWednesdayCheck(plan, items, teamMembers, scEmail);
+  if (runDay === 4) await runThursdayCheck(plan, items, teamMembers, scEmail);
+  if (runDay === 5) await runFridayCheck(plan, items, teamMembers, scEmail);
+  if (runDay === 6) await runSaturdayCheck(plan, items, teamMembers, scEmail);
 
   console.log("PCO Checker complete");
 }
