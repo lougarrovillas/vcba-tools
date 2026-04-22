@@ -82,7 +82,6 @@ function findPersonForRole(teamMembers, roleKeywords) {
     const pos = (m.attributes.team_position_name || "").toLowerCase();
     return roleKeywords.some(kw => pos === kw.toLowerCase());
   });
-  });
   return member ? member.attributes.person_id : null;
 }
 
