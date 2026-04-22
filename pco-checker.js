@@ -64,13 +64,15 @@ async function getPlanAttachments(planId) {
   return data.data;
 }
 
-// Get SC person ID - finds person assigned to "Song Coordinator" or "SC" team
+// Get SC person ID - finds person with COORDINATOR position in Service Coordinators team
 async function getSCPersonId(planId) {
   const members = await getPlanTeamMembers(planId);
-  // Look for SC role - adjust team name to match your PCO setup
+  // Log all position names to help debug
+  console.log("📋 All team positions:", members.map(m => `${m.attributes.team_position_name} (team: ${m.attributes.team_name})`).join(", "));
   const sc = members.find(m => {
-    const name = (m.attributes.team_position_name || "").toLowerCase();
-    return name.includes("song coordinator") || name.includes("sc") || name.includes("worship coordinator");
+    const pos = (m.attributes.team_position_name || "").toLowerCase();
+    const team = (m.attributes.team_name || "").toLowerCase();
+    return pos.includes("coordinator") && team.includes("service coordinator");
   });
   return sc ? sc.attributes.person_id : null;
 }
@@ -99,9 +101,9 @@ function itemMatches(item, keywords) {
 async function runWednesdayCheck(plan, items, teamMembers) {
   console.log("\n📅 WEDNESDAY CHECK — Verses due today");
   const verseItems = [
-    { keywords: ["call to worship", "c2w"], roleKeywords: ["call to worship", "c2w"], label: "Call to Worship" },
-    { keywords: ["tithes", "offering", "t&o"], roleKeywords: ["tithes", "offering"], label: "Tithes & Offering" },
-    { keywords: ["benediction"], roleKeywords: ["benediction", "word"], label: "Benediction" },
+    { keywords: ["call to worship", "c2w"], roleKeywords: ["call to worship"], label: "Call to Worship" },
+    { keywords: ["tithes", "offering"], roleKeywords: ["tithes & offering", "tithes and offering", "tithes"], label: "Tithes & Offering" },
+    { keywords: ["benediction"], roleKeywords: ["word"], label: "Benediction" },
   ];
 
   for (const vi of verseItems) {
