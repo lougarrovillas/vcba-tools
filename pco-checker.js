@@ -71,8 +71,7 @@ async function getSCPersonId(planId) {
   console.log("📋 All team positions:", members.map(m => `${m.attributes.team_position_name} (team: ${m.attributes.team_name})`).join(", "));
   const sc = members.find(m => {
     const pos = (m.attributes.team_position_name || "").toLowerCase();
-    const team = (m.attributes.team_name || "").toLowerCase();
-    return pos.includes("coordinator") && team.includes("service coordinator");
+    return pos === "coordinator";
   });
   return sc ? sc.attributes.person_id : null;
 }
@@ -81,7 +80,8 @@ async function getSCPersonId(planId) {
 function findPersonForRole(teamMembers, roleKeywords) {
   const member = teamMembers.find(m => {
     const pos = (m.attributes.team_position_name || "").toLowerCase();
-    return roleKeywords.some(kw => pos.includes(kw));
+    return roleKeywords.some(kw => pos === kw.toLowerCase());
+  });
   });
   return member ? member.attributes.person_id : null;
 }
