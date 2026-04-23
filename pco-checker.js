@@ -259,7 +259,7 @@ async function main() {
   const runDay = (dayOverride !== undefined && dayOverride !== "") ? parseInt(dayOverride) : new Date().getDay();
   console.log("Running PCO checker - day " + runDay);
 
-  if (![3, 4, 5, 6].includes(runDay)) {
+  if (![5, 6].includes(runDay)) {
     console.log("Not a scheduled check day. Exiting.");
     return;
   }
@@ -281,8 +281,8 @@ async function main() {
     console.log("SC Email: " + (scEmail || "NOT FOUND"));
   }
 
-  if (runDay === 3) await runWednesdayCheck(plan, items, teamMembers, scEmail);
-  if (runDay === 4) await runThursdayCheck(plan, items, teamMembers, scEmail);
+  // if (runDay === 3) await runWednesdayCheck(plan, items, teamMembers, scEmail);
+  // if (runDay === 4) await runThursdayCheck(plan, items, teamMembers, scEmail);
   if (runDay === 5) await runFridayCheck(plan, items, teamMembers, scEmail);
   if (runDay === 6) await runSaturdayCheck(plan, items, teamMembers, scEmail);
 
