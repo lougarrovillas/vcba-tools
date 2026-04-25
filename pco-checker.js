@@ -1,6 +1,9 @@
 // VCBA PCO Sunday Readiness Checker
-// Runs Wed (verses), Thu (songs), Fri (SC summary), Sat (files)
-// Posts to Discord + sends email to SC via Gmail
+// Wed 9PM  — verse check
+// Thu 9PM  — song check
+// Fri 8PM  — full status summary (verses + songs)
+// Sat 2PM  — final sweep (verses + songs + announcement + word)
+// + completion check fires as soon as everything is green
 
 const PCO_APP_ID = process.env.PCO_APP_ID;
 const PCO_SECRET = process.env.PCO_SECRET;
@@ -11,19 +14,14 @@ const SERVICE_TYPE_ID = "1723712";
 
 const authHeader = "Basic " + Buffer.from(`${PCO_APP_ID}:${PCO_SECRET}`).toString("base64");
 
-// ── Email via Gmail SMTP ─────────────────────────────────
+// ── Email ────────────────────────────────────────────────
 async function sendEmail(toEmail, subject, body) {
   if (!GMAIL_APP_PASSWORD) { console.warn("No Gmail password set"); return; }
-
   const nodemailer = await import("nodemailer");
   const transporter = nodemailer.default.createTransport({
     service: "gmail",
-    auth: {
-      user: GMAIL_FROM,
-      pass: GMAIL_APP_PASSWORD,
-    },
+    auth: { user: GMAIL_FROM, pass: GMAIL_APP_PASSWORD },
   });
-
   try {
     await transporter.sendMail({
       from: `"VCBA Tech" <${GMAIL_FROM}>`,
@@ -88,9 +86,16 @@ async function getPlanTeamMembers(planId) {
   return data.data;
 }
 
-async function getPlanAttachments(planId) {
-  const data = await pcoGet(`/service_types/${SERVICE_TYPE_ID}/plans/${planId}/attachments?per_page=100`);
-  return data.data;
+async function getItemAttachments(planId, itemId) {
+  try {
+    const data = await pcoGet(
+      `/service_types/${SERVICE_TYPE_ID}/plans/${planId}/items/${itemId}/attachments?per_page=20`
+    );
+    return data.data;
+  } catch (err) {
+    console.warn("Could not get attachments for item " + itemId + ": " + err.message);
+    return [];
+  }
 }
 
 async function getSCEmail(personId) {
@@ -107,19 +112,8 @@ async function getSCEmail(personId) {
 function getSCInfo(members) {
   const sc = members.find(m => (m.attributes.team_position_name || "").toLowerCase() === "coordinator");
   if (!sc) return { name: "SC", personId: null };
-  const personId = sc.relationships && sc.relationships.person && sc.relationships.person.data
-    ? sc.relationships.person.data.id : null;
+  const personId = sc.relationships?.person?.data?.id || null;
   return { name: sc.attributes.name || "SC", personId };
-}
-
-function hasVersePlaceholder(item) {
-  const desc = (item.attributes.description || "").toLowerCase();
-  return desc.includes("[verse]") || desc.trim() === "";
-}
-
-function itemMatches(item, keywords) {
-  const title = (item.attributes.title || "").toLowerCase();
-  return keywords.some(kw => title.includes(kw));
 }
 
 function buildHeader(plan) {
@@ -130,36 +124,87 @@ function buildHeader(plan) {
   return { planDate, seriesTitle, weekTitle, planUrl };
 }
 
+function itemMatches(item, keywords) {
+  const title = (item.attributes.title || "").toLowerCase();
+  return keywords.some(kw => title.includes(kw));
+}
+
+// ── Item-level Checks ────────────────────────────────────
+
+// Verse: filled if [Bible Verse] placeholder is gone OR html_details has content
+function isVerseFilled(item) {
+  if (!item) return false;
+  const desc = (item.attributes.description || "").toLowerCase();
+  const details = (item.attributes.html_details || "").trim();
+  const hasPlaceholder = desc.includes("[bible verse]");
+  const hasDetails = details.length > 0;
+  return !hasPlaceholder || hasDetails;
+}
+
+// Announcement / Special Announcement:
+// filled if html_details has content OR attachment exists
+async function isAnnouncementFilled(planId, item) {
+  if (!item) return false;
+  const details = (item.attributes.html_details || "").trim();
+  if (details.length > 0) return true;
+  const attachments = await getItemAttachments(planId, item.id);
+  return attachments.length > 0;
+}
+
+// Word: filled if description no longer has placeholder OR attachment exists
+async function isWordFilled(planId, item) {
+  if (!item) return false;
+  const desc = (item.attributes.description || "");
+  const details = (item.attributes.html_details || "").trim();
+  const hasPlaceholder = desc.includes("[Attach Sermon Notes/Sermon Slides Here]");
+  if (!hasPlaceholder || details.length > 0) return true;
+  const attachments = await getItemAttachments(planId, item.id);
+  return attachments.length > 0;
+}
+
+// Songs: filled if 4 song-type items exist OR Songs item description updated
+function isSongsFilled(items) {
+  const songItems = items.filter(i => i.attributes.item_type === "song");
+  if (songItems.length >= 4) return true;
+  const songsItem = items.find(i => itemMatches(i, ["songs"]));
+  if (songsItem) {
+    const desc = (songsItem.attributes.description || "").toLowerCase();
+    return !desc.includes("[add songs here]");
+  }
+  return false;
+}
+
+// ── Verse Items Config ───────────────────────────────────
+const VERSE_ITEMS = [
+  { keywords: ["call to worship"], label: "Call to Worship" },
+  { keywords: ["tithes and offerings", "tithes & offerings"], label: "Tithes & Offerings" },
+  { keywords: ["benediction"], label: "Benediction" },
+];
+
 // ── Day Checks ───────────────────────────────────────────
 async function runWednesdayCheck(plan, items, teamMembers, scEmail) {
   console.log("WEDNESDAY CHECK - Verses due today");
   const { planDate, seriesTitle, weekTitle, planUrl } = buildHeader(plan);
   const { name: scName } = getSCInfo(teamMembers);
 
-  const verseChecks = [
-    { keywords: ["call to worship", "c2w"], label: "Call to Worship" },
-    { keywords: ["tithes", "offering"], label: "Tithes & Offering" },
-    { keywords: ["benediction"], label: "Benediction" },
-  ];
-
   let status = "";
   let anyMissing = false;
-  for (const vc of verseChecks) {
-    const item = items.find(i => itemMatches(i, vc.keywords));
-    const missing = !item || hasVersePlaceholder(item);
-    if (missing) anyMissing = true;
-    status += (missing ? "❌" : "✅") + " " + vc.label + "\n";
-    console.log((missing ? "MISSING" : "OK") + " - " + vc.label);
+  for (const v of VERSE_ITEMS) {
+    const item = items.find(i => itemMatches(i, v.keywords));
+    const filled = isVerseFilled(item);
+    if (!filled) anyMissing = true;
+    status += (filled ? "✅" : "❌") + " " + v.label + "\n";
+    console.log((filled ? "OK" : "MISSING") + " - " + v.label);
   }
 
   const subject = "📖 VCBA Wednesday Verse Check — " + planDate;
   const body = "📋 VCBA Sunday Readiness\n"
-    + (seriesTitle ? seriesTitle + " - " : "") + weekTitle + " | " + planDate + "\n"
+    + (seriesTitle ? seriesTitle + " — " : "") + weekTitle + " | " + planDate + "\n"
     + planUrl + "\n\n"
     + "📖 Wednesday Verse Check:\n" + status + "\n"
     + (anyMissing
       ? "⚠️ SC (" + scName + "): Please follow up on missing verses."
-      : "✅ All verses filled! Great job.");
+      : "✅ All verses filled!");
 
   await notify(scEmail, subject, body);
 }
@@ -169,19 +214,19 @@ async function runThursdayCheck(plan, items, teamMembers, scEmail) {
   const { planDate, seriesTitle, weekTitle, planUrl } = buildHeader(plan);
   const { name: scName } = getSCInfo(teamMembers);
 
-  const songItems = items.filter(i => i.attributes.item_type === "song");
-  const count = songItems.length;
-  console.log("Songs found: " + count + "/4");
+  const filled = isSongsFilled(items);
+  const songCount = items.filter(i => i.attributes.item_type === "song").length;
+  console.log("Songs found: " + songCount);
 
   const subject = "🎵 VCBA Thursday Song Check — " + planDate;
   const body = "📋 VCBA Sunday Readiness\n"
-    + (seriesTitle ? seriesTitle + " - " : "") + weekTitle + " | " + planDate + "\n"
+    + (seriesTitle ? seriesTitle + " — " : "") + weekTitle + " | " + planDate + "\n"
     + planUrl + "\n\n"
     + "🎵 Thursday Song Check:\n"
-    + (count >= 4 ? "✅" : "❌") + " Songs: " + count + "/4\n\n"
-    + (count < 4
-      ? "⚠️ SC (" + scName + "): " + (4 - count) + " song(s) still missing. Please update PCO."
-      : "✅ All 4 songs entered!");
+    + (filled ? "✅" : "❌") + " Songs: " + songCount + "/4\n\n"
+    + (!filled
+      ? "⚠️ SC (" + scName + "): Songs still missing. Please follow up with Worship Team."
+      : "✅ All songs entered!");
 
   await notify(scEmail, subject, body);
 }
@@ -191,81 +236,157 @@ async function runFridayCheck(plan, items, teamMembers, scEmail) {
   const { planDate, seriesTitle, weekTitle, planUrl } = buildHeader(plan);
   const { name: scName } = getSCInfo(teamMembers);
 
-  const verseChecks = [
-    { keywords: ["call to worship", "c2w"], label: "Call to Worship" },
-    { keywords: ["tithes", "offering"], label: "Tithes & Offering" },
-    { keywords: ["benediction"], label: "Benediction" },
-  ];
-
   let verseStatus = "";
   let versesMissing = false;
-  for (const vc of verseChecks) {
-    const item = items.find(i => itemMatches(i, vc.keywords));
-    const missing = !item || hasVersePlaceholder(item);
-    if (missing) versesMissing = true;
-    verseStatus += (missing ? "❌" : "✅") + " " + vc.label + "\n";
+  for (const v of VERSE_ITEMS) {
+    const item = items.find(i => itemMatches(i, v.keywords));
+    const filled = isVerseFilled(item);
+    if (!filled) versesMissing = true;
+    verseStatus += (filled ? "✅" : "❌") + " " + v.label + "\n";
   }
 
-  const songItems = items.filter(i => i.attributes.item_type === "song");
-  const songCount = songItems.length;
-  const allGood = !versesMissing && songCount >= 4;
+  const songsFilled = isSongsFilled(items);
+  const songCount = items.filter(i => i.attributes.item_type === "song").length;
+  const allGood = !versesMissing && songsFilled;
 
   const subject = "📋 VCBA Friday Status — " + planDate;
   const body = "📋 VCBA Sunday Readiness\n"
-    + (seriesTitle ? seriesTitle + " - " : "") + weekTitle + " | " + planDate + "\n"
+    + (seriesTitle ? seriesTitle + " — " : "") + weekTitle + " | " + planDate + "\n"
     + planUrl + "\n\n"
-    + "Friday Full Status (SC: " + scName + ")\n\n"
+    + "Friday Status Check (SC: " + scName + ")\n\n"
     + "📖 Verses:\n" + verseStatus + "\n"
-    + "🎵 Songs: " + (songCount >= 4 ? "✅" : "❌") + " " + songCount + "/4\n\n"
+    + "🎵 Songs: " + (songsFilled ? "✅" : "❌") + " " + songCount + "/4\n\n"
     + (allGood
-      ? "✅ Everything looks good! Ready for Sunday 🎉"
-      : "⚠️ Some items still need attention before Sunday.");
+      ? "✅ Verses and songs are good! Waiting on Saturday items (announcements + sermon)."
+      : "⚠️ Some items still need attention — please follow up before Saturday.");
 
   await notify(scEmail, subject, body);
 }
 
 async function runSaturdayCheck(plan, items, teamMembers, scEmail) {
-  console.log("SATURDAY CHECK - Files due by 2PM");
+  console.log("SATURDAY CHECK - Final sweep");
   const { planDate, seriesTitle, weekTitle, planUrl } = buildHeader(plan);
+  const { name: scName } = getSCInfo(teamMembers);
 
-  const attachments = await getPlanAttachments(plan.id);
-  const attachmentNames = attachments.map(a => (a.attributes.filename || "").toLowerCase());
-  console.log("Attachments: " + attachments.length);
+  // Verses
+  let verseStatus = "";
+  let versesMissing = false;
+  for (const v of VERSE_ITEMS) {
+    const item = items.find(i => itemMatches(i, v.keywords));
+    const filled = isVerseFilled(item);
+    if (!filled) versesMissing = true;
+    verseStatus += (filled ? "✅" : "❌") + " " + v.label + "\n";
+  }
 
-  const hasAnnouncements = attachmentNames.some(n =>
-    n.includes("announcement") || n.includes("graphic") || n.includes("bulletin")
-  );
-  const hasSermonFiles = attachmentNames.some(n =>
-    n.includes("sermon") || n.includes("notes") || n.includes(".pptx") || n.includes(".pdf") || n.includes("slides")
-  );
+  // Songs
+  const songsFilled = isSongsFilled(items);
+  const songCount = items.filter(i => i.attributes.item_type === "song").length;
 
-  const subject = "📢 VCBA Saturday File Check — " + planDate;
-  const body = "📋 VCBA Sunday Readiness\n"
-    + (seriesTitle ? seriesTitle + " - " : "") + weekTitle + " | " + planDate + "\n"
+  // Announcement
+  const announcementItem = items.find(i => itemMatches(i, ["announcement"]) && !itemMatches(i, ["special"]));
+  const announcementFilled = await isAnnouncementFilled(plan.id, announcementItem);
+
+  // Special Announcement
+  const specialItem = items.find(i => itemMatches(i, ["special announcement"]));
+  const specialFilled = await isAnnouncementFilled(plan.id, specialItem);
+
+  // Word
+  const wordItem = items.find(i => itemMatches(i, ["word"]));
+  const wordFilled = await isWordFilled(plan.id, wordItem);
+
+  const allGood = !versesMissing && songsFilled && announcementFilled && specialFilled && wordFilled;
+
+  const subject = "📢 VCBA Saturday Final Check — " + planDate;
+  const body = "📋 VCBA Sunday Readiness — FINAL SWEEP\n"
+    + (seriesTitle ? seriesTitle + " — " : "") + weekTitle + " | " + planDate + "\n"
     + planUrl + "\n\n"
-    + "📢 Saturday File Check (due by 2PM):\n"
-    + (hasAnnouncements ? "✅" : "❌") + " Announcement graphics\n"
-    + (hasSermonFiles ? "✅" : "❌") + " Sermon notes/slides\n\n"
-    + (!hasAnnouncements || !hasSermonFiles
-      ? "⚠️ Pastor Neil: Missing files need to be uploaded to PCO by 2PM today."
-      : "✅ All files uploaded! Ready for Sunday.");
+    + "📖 Verses:\n" + verseStatus + "\n"
+    + "🎵 Songs: " + (songsFilled ? "✅" : "❌") + " " + songCount + "/4\n\n"
+    + "📣 Announcements:\n"
+    + (announcementFilled ? "✅" : "❌") + " Announcement\n"
+    + (specialFilled ? "✅" : "❌") + " Special Announcement/Intro\n\n"
+    + "✝️ Sermon:\n"
+    + (wordFilled ? "✅" : "❌") + " Word (sermon notes/slides)\n\n"
+    + (allGood
+      ? "🟢 ALL CLEAR — Everything is ready! SC notify Tech Team to build the PP7 playlist."
+      : "⚠️ SC (" + scName + "): Some items still need attention before Sunday.");
 
+  await notify(scEmail, subject, body);
+}
+
+// ── Completion Check ─────────────────────────────────────
+async function runCompletionCheck(plan, items, teamMembers, scEmail) {
+  console.log("COMPLETION CHECK - Is everything filled?");
+  const { planDate, seriesTitle, weekTitle, planUrl } = buildHeader(plan);
+  const { name: scName } = getSCInfo(teamMembers);
+
+  let versesFilled = true;
+  for (const v of VERSE_ITEMS) {
+    const item = items.find(i => itemMatches(i, v.keywords));
+    if (!isVerseFilled(item)) { versesFilled = false; break; }
+  }
+
+  const songsFilled = isSongsFilled(items);
+
+  const announcementItem = items.find(i => itemMatches(i, ["announcement"]) && !itemMatches(i, ["special"]));
+  const announcementFilled = await isAnnouncementFilled(plan.id, announcementItem);
+
+  const specialItem = items.find(i => itemMatches(i, ["special announcement"]));
+  const specialFilled = await isAnnouncementFilled(plan.id, specialItem);
+
+  const wordItem = items.find(i => itemMatches(i, ["word"]));
+  const wordFilled = await isWordFilled(plan.id, wordItem);
+
+  const allFilled = versesFilled && songsFilled && announcementFilled && specialFilled && wordFilled;
+
+  console.log("Verses: " + versesFilled + ", Songs: " + songsFilled
+    + ", Announcement: " + announcementFilled + ", Special: " + specialFilled
+    + ", Word: " + wordFilled);
+
+  if (!allFilled) {
+    console.log("Not all filled yet — skipping completion notification");
+    return;
+  }
+
+  // Flag file prevents duplicate notifications within same runner session
+  const fs = await import("fs");
+  const flagFile = `/tmp/vcba_allclear_${plan.id}.flag`;
+  if (fs.existsSync(flagFile)) {
+    console.log("All-clear already sent for plan " + plan.id + " — skipping");
+    return;
+  }
+  fs.writeFileSync(flagFile, new Date().toISOString());
+
+  const subject = "🟢 VCBA OOS Ready — All Content Submitted! — " + planDate;
+  const body = "🟢 ALL CLEAR — OOS READY TO BUILD\n"
+    + (seriesTitle ? seriesTitle + " — " : "") + weekTitle + " | " + planDate + "\n"
+    + planUrl + "\n\n"
+    + "Everything has been submitted for this Sunday:\n"
+    + "✅ Call to Worship verse\n"
+    + "✅ Tithes & Offerings verse\n"
+    + "✅ Benediction verse\n"
+    + "✅ Songs\n"
+    + "✅ Announcement\n"
+    + "✅ Special Announcement/Intro\n"
+    + "✅ Word (sermon notes/slides)\n\n"
+    + "📋 SC (" + scName + "): OOS is ready — please notify Tech Team to start building the PP7 playlist.";
+
+  console.log("🟢 All content filled! Sending all-clear...");
   await notify(scEmail, subject, body);
 }
 
 // ── Main ─────────────────────────────────────────────────
 async function main() {
   const dayOverride = process.env.DAY_OVERRIDE;
-  const runDay = (dayOverride !== undefined && dayOverride !== "") ? parseInt(dayOverride) : new Date().getDay();
-  console.log("Running PCO checker - day " + runDay);
+  const runCompletion = process.env.RUN_COMPLETION === "true";
+  const runDay = (dayOverride !== undefined && dayOverride !== "")
+    ? parseInt(dayOverride)
+    : new Date().getDay();
 
-  if (![5, 6].includes(runDay)) {
-    console.log("Not a scheduled check day. Exiting.");
-    return;
-  }
+  console.log("Running PCO checker — day " + runDay);
 
   const plan = await getUpcomingSundayPlan();
-  console.log("Next plan: " + plan.attributes.title + " - " + plan.attributes.sort_date);
+  console.log("Next plan: " + plan.attributes.title + " — " + plan.attributes.sort_date);
 
   const items = await getPlanItems(plan.id);
   const teamMembers = await getPlanTeamMembers(plan.id);
@@ -274,17 +395,21 @@ async function main() {
   console.log("Team members: " + teamMembers.length);
   console.log("SC: " + scName + " (ID: " + scPersonId + ")");
 
-  // Get SC email from PCO People API
   let scEmail = null;
   if (scPersonId) {
     scEmail = await getSCEmail(scPersonId);
     console.log("SC Email: " + (scEmail || "NOT FOUND"));
   }
 
-  // if (runDay === 3) await runWednesdayCheck(plan, items, teamMembers, scEmail);
-  // if (runDay === 4) await runThursdayCheck(plan, items, teamMembers, scEmail);
+  if (runDay === 3) await runWednesdayCheck(plan, items, teamMembers, scEmail);
+  if (runDay === 4) await runThursdayCheck(plan, items, teamMembers, scEmail);
   if (runDay === 5) await runFridayCheck(plan, items, teamMembers, scEmail);
   if (runDay === 6) await runSaturdayCheck(plan, items, teamMembers, scEmail);
+
+  // Completion check runs alongside every scheduled check + when manually triggered
+  if (runCompletion || [3, 4, 5, 6].includes(runDay)) {
+    await runCompletionCheck(plan, items, teamMembers, scEmail);
+  }
 
   console.log("PCO Checker complete");
 }
