@@ -1,0 +1,28 @@
+name: VCBA PCO Item Inspector
+
+on:
+  workflow_dispatch:
+    inputs:
+      plan_id:
+        description: "PCO Plan ID to inspect (leave blank for both April 26 + May 31)"
+        required: false
+        default: ""
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run PCO Inspector
+        env:
+          PCO_APP_ID: ${{ secrets.PCO_APP_ID }}
+          PCO_SECRET: ${{ secrets.PCO_SECRET }}
+          PLAN_ID: ${{ github.event.inputs.plan_id }}
+        run: node pco-inspector.js
