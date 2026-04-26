@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VCBA ProPresenter 7 Guide</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f0f0f; color: #e0e0e0; }
+
+    header {
+      background: #1a1a1a;
+      border-bottom: 3px solid #2E7D32;
+      padding: 32px 24px 24px;
+      text-align: center;
+    }
+    header .logo { font-size: 13px; letter-spacing: 3px; color: #4CAF50; text-transform: uppercase; margin-bottom: 8px; }
+    header h1 { font-size: 28px; font-weight: 700; color: #ffffff; }
+    header p { margin-top: 8px; font-size: 14px; color: #888; }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #4CAF50;
+      margin: 40px 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .guide-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+    .guide-card-header {
+      padding: 16px 20px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .guide-num {
+      background: #2E7D32;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .guide-title { font-size: 16px; font-weight: 600; color: #fff; }
+    .guide-desc { font-size: 13px; color: #888; margin-top: 2px; }
+    .guide-embed {
+      border-top: 1px solid #2a2a2a;
+    }
+    .guide-embed iframe {
+      display: block;
+      width: 100%;
+      border: 0;
+      min-height: 400px;
+      aspect-ratio: 16 / 10;
+    }
+
+    .doc-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .doc-icon { font-size: 32px; flex-shrink: 0; }
+    .doc-info h3 { font-size: 15px; font-weight: 600; color: #fff; }
+    .doc-info p { font-size: 13px; color: #888; margin-top: 4px; }
+    .doc-link {
+      margin-left: auto;
+      background: #2E7D32;
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .doc-link:hover { background: #388E3C; }
+
+    .note {
+      background: #1a2a1a;
+      border: 1px solid #2E7D32;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #aaa;
+      margin-top: 32px;
+      line-height: 1.6;
+    }
+    .note strong { color: #4CAF50; }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #444;
+      border-top: 1px solid #1a1a1a;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Victory Church of the Bay Area</div>
+  <h1>ProPresenter 7 — Tech Guide</h1>
+  <p>Step-by-step guides for setting up and running PP7 for Sunday service</p>
+</header>
+
+<div class="container">
+
+  <!-- Setup Guides -->
+  <div class="section-label">Setup Guides — Complete Once Per Machine</div>
+
+  <div class="guide-card">
+    <div class="guide-card-header">
+      <div class="guide-num">1</div>
+      <div>
+        <div class="guide-title">How to Setup Remote Access to Sanctuary PC</div>
+        <div class="guide-desc">Install Tailscale + Windows App to remote into the sanctuary PC from home</div>
+      </div>
+    </div>
+    <div class="guide-embed">
+      <iframe src="https://scribehow.com/embed/How_to_Setup_Remote_Access_to_Sanctuary_PC__oodGkwg4QCyu-YaiqFCkyg?as=video" allow="fullscreen"></iframe>
+    </div>
+  </div>
+
+  <div class="guide-card">
+    <div class="guide-card-header">
+      <div class="guide-num">2</div>
+      <div>
+        <div class="guide-title">How to Sync ProPresenter with Google Drive</div>
+        <div class="guide-desc">Configure PP7 sync settings so libraries, playlists and themes stay up to date</div>
+      </div>
+    </div>
+    <div class="guide-embed">
+      <iframe src="https://scribehow.com/embed/How_To_Sync_ProPresenter_With_Google_Drive__XLMkKD0USv-vOZkvV0ceTg?as=video" allow="fullscreen"></iframe>
+    </div>
+  </div>
+
+  <!-- Series Setup -->
+  <div class="section-label">Series Setup — Complete Once Per Sermon Series</div>
+
+  <div class="guide-card">
+    <div class="guide-card-header">
+      <div class="guide-num">3</div>
+      <div>
+        <div class="guide-title">How to Create a New Sermon Series Theme</div>
+        <div class="guide-desc">Duplicate the VCBA Sermon Template and swap in the new series background graphics</div>
+      </div>
+    </div>
+    <div class="guide-embed">
+      <iframe src="https://scribehow.com/embed/How_to_Create_a_New_Sermon_Series_Theme_in_Propresenter__MzcEt2p7SUyMV3OihdeyAg?as=video" allow="fullscreen"></iframe>
+    </div>
+  </div>
+
+  <div class="guide-card">
+    <div class="guide-card-header">
+      <div class="guide-num">4</div>
+      <div>
+        <div class="guide-title">How to Setup Actions on the Word Template</div>
+        <div class="guide-desc">Wire Look actions to each slide type so the correct screen output fires automatically during service</div>
+      </div>
+    </div>
+    <div class="guide-embed">
+      <iframe src="https://scribehow.com/embed/How_to_Setup_Actions_on_the_Word_Template__GlCmpASuSxOQ8-d0hjscag?as=video" allow="fullscreen"></iframe>
+    </div>
+  </div>
+
+  <!-- Weekly Guides -->
+  <div class="section-label">Weekly Guides — Saturday Prep</div>
+
+  <div class="guide-card">
+    <div class="guide-card-header">
+      <div class="guide-num">5</div>
+      <div>
+        <div class="guide-title">How to Import and Format Song Lyrics in ProPresenter</div>
+        <div class="guide-desc">Add a new song to the library with correct formatting and theme applied</div>
+      </div>
+    </div>
+    <div class="guide-embed">
+      <iframe src="https://scribehow.com/embed/Import_and_Format_Song_Lyrics_in_ProPresenter__mBuRgqncTM--zVJ3fIRf3A?as=video" allow="fullscreen"></iframe>
+    </div>
+  </div>
+
+  <!-- Reference -->
+  <div class="section-label">Reference Documents</div>
+
+  <div class="doc-card">
+    <div class="doc-icon">📄</div>
+    <div class="doc-info">
+      <h3>PP7 Looks Configuration Reference</h3>
+      <p>Complete checkbox settings for all 9 Looks — Stage Projector vs Livestream outputs explained</p>
+    </div>
+    <a class="doc-link" href="https://github.com/lougarrovillas/vcba-tools/raw/main/pp7-guide/VCBA_PP7_Looks_Reference.docx" download>Download</a>
+  </div>
+
+  <div class="note">
+    <strong>Note:</strong> Guides 1 and 2 are one-time setup guides for each machine. Guides 3 and 4 are done once per sermon series. Guide 5 and the playlist guide are used weekly during Saturday prep. When in doubt, check with the Tech Lead before making changes to the sanctuary PC.
+  </div>
+
+</div>
+
+<footer>
+  VCBA Tech & Comms · ProPresenter 7 Guide · Updated April 2026
+</footer>
+
+</body>
+</html>
