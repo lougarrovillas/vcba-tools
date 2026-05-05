@@ -35,4 +35,4 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           DAY_OVERRIDE: ${{ github.event.inputs.day_override }}
-        run: node pco-checker.js
+        run: node pco-tools/pco-checker.js
