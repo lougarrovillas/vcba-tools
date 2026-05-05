@@ -25,4 +25,4 @@ jobs:
           PCO_APP_ID: ${{ secrets.PCO_APP_ID }}
           PCO_SECRET: ${{ secrets.PCO_SECRET }}
           PLAN_ID: ${{ github.event.inputs.plan_id }}
-        run: node pco-inspector.js
+        run: node pco-tools/pco-inspector.js
