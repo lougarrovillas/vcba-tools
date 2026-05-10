@@ -2,10 +2,10 @@ name: VCBA PCO Sunday Readiness Checker
 
 on:
   schedule:
-    # Friday 9PM PT (Sat 5AM UTC) — full status check
-    - cron: "0 5 * * 6"
-    # Saturday 9PM PT (Sun 5AM UTC) — files check
-    - cron: "0 5 * * 0"
+    # Friday 8PM PDT (Sat 3AM UTC)
+    - cron: "0 3 * * 6"
+    # Saturday 2PM PDT (Sat 9PM UTC)
+    - cron: "0 21 * * 6"
   workflow_dispatch:
     inputs:
       day_override:
@@ -35,4 +35,5 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           DAY_OVERRIDE: ${{ github.event.inputs.day_override }}
+        run: node pco-tools/pco-checker.js          DAY_OVERRIDE: ${{ github.event.inputs.day_override }}
         run: node pco-tools/pco-checker.js
