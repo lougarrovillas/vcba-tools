@@ -190,13 +190,8 @@ function isVerseFilled(item) {
 
 async function isAnnouncementFilled(planId, item) {
   if (!item) return false;
-  // Check description (sometimes filled here instead of details)
-  const desc = (item.attributes.description || "").trim();
-  if (desc.length > 0) return true;
-  // Check html_details
   const details = (item.attributes.html_details || "").trim();
   if (details.length > 0) return true;
-  // Check attachments
   const attachments = await getItemAttachments(planId, item.id);
   return attachments.length > 0;
 }
@@ -288,8 +283,7 @@ async function runSaturdayCheck(plan, items, teamMembers, emails) {
   const wordItem = items.find(i => itemMatches(i, ["word"]));
   const wordFilled = await isWordFilled(plan.id, wordItem);
 
-  // Special announcement is optional — doesn't block all-clear
-  const allGood = !versesMissing && songsFilled && announcementFilled && wordFilled;
+  const allGood = !versesMissing && songsFilled && announcementFilled && specialFilled && wordFilled;
 
   const subject = "📢 VCBA Saturday Final Check — " + planDate;
   const body = "📋 VCBA Sunday Readiness — FINAL SWEEP\n"
@@ -299,7 +293,7 @@ async function runSaturdayCheck(plan, items, teamMembers, emails) {
     + "🎵 Songs: " + (songsFilled ? "✅" : "❌") + " " + songCount + "/4\n\n"
     + "📣 Announcements:\n"
     + (announcementFilled ? "✅" : "❌") + " Announcement\n"
-    + (specialFilled ? "✅" : "➖") + " Special Announcement/Intro (optional)\n\n"
+    + (specialFilled ? "✅" : "❌") + " Special Announcement/Intro\n\n"
     + "✝️ Sermon:\n"
     + (wordFilled ? "✅" : "❌") + " Word (sermon notes/slides)\n\n"
     + (allGood
@@ -331,10 +325,10 @@ async function runCompletionCheck(plan, items, teamMembers, emails) {
   const wordItem = items.find(i => itemMatches(i, ["word"]));
   const wordFilled = await isWordFilled(plan.id, wordItem);
 
-  const allFilled = versesFilled && songsFilled && announcementFilled && wordFilled;
+  const allFilled = versesFilled && songsFilled && announcementFilled && specialFilled && wordFilled;
 
   console.log("Verses: " + versesFilled + ", Songs: " + songsFilled
-    + ", Announcement: " + announcementFilled + ", Special: " + specialFilled + " (optional)"
+    + ", Announcement: " + announcementFilled + ", Special: " + specialFilled
     + ", Word: " + wordFilled);
 
   if (!allFilled) {
