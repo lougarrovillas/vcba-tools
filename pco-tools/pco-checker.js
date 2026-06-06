@@ -77,17 +77,36 @@ async function getUpcomingSundayPlan() {
   return plans[0];
 }
 
+// Include item_notes so we can check note content for announcements
 async function getPlanItems(planId) {
-  const data = await pcoGet(`/service_types/${SERVICE_TYPE_ID}/plans/${planId}/items?per_page=100`);
+  const data = await pcoGet(
+    `/service_types/${SERVICE_TYPE_ID}/plans/${planId}/items?include=item_notes&per_page=100`
+  );
+  // Build notes map: itemId → array of note content strings
+  const notesMap = {};
+  if (data.included) {
+    for (const inc of data.included) {
+      if (inc.type === "ItemNote") {
+        const itemId = inc.relationships?.item?.data?.id;
+        if (itemId) {
+          if (!notesMap[itemId]) notesMap[itemId] = [];
+          const content = (inc.attributes.content || "").trim();
+          if (content) notesMap[itemId].push(content);
+        }
+      }
+    }
+  }
+  for (const item of data.data) {
+    item._notes = notesMap[item.id] || [];
+  }
   return data.data;
 }
 
-// include=team so we can filter by team name
+// Include team so we can filter by team name
 async function getPlanTeamMembers(planId) {
   const data = await pcoGet(
     `/service_types/${SERVICE_TYPE_ID}/plans/${planId}/team_members?include=team&per_page=100`
   );
-  // Build a map of team id → team name from included
   const teamMap = {};
   if (data.included) {
     for (const inc of data.included) {
@@ -96,7 +115,6 @@ async function getPlanTeamMembers(planId) {
       }
     }
   }
-  // Attach team name to each member for easy lookup
   for (const member of data.data) {
     const teamId = member.relationships?.team?.data?.id;
     member._teamName = teamId ? (teamMap[teamId] || "") : "";
@@ -138,30 +156,30 @@ function getSCInfo(members) {
   return { name: sc.attributes.name || "SC", personId };
 }
 
-// Proclaim = current visual tech (Technical Support team, Proclaim position)
-function getProclaimInfo(members) {
-  const p = members.find(m =>
-    (m.attributes.team_position_name || "").toLowerCase() === "proclaim" &&
-    m._teamName.includes("technical")
-  );
-  if (!p) return { name: null, personId: null };
-  return {
-    name: p.attributes.name || "Proclaim Tech",
-    personId: p.relationships?.person?.data?.id || null,
-  };
+// Returns ALL people in Proclaim position (supports shadowing)
+function getProclaimInfoAll(members) {
+  return members
+    .filter(m =>
+      (m.attributes.team_position_name || "").toLowerCase() === "proclaim" &&
+      m._teamName.includes("technical")
+    )
+    .map(m => ({
+      name: m.attributes.name || "Proclaim Tech",
+      personId: m.relationships?.person?.data?.id || null,
+    }));
 }
 
-// Communications Member = comms/visual volunteer
-function getCommsMemberInfo(members) {
-  const c = members.find(m =>
-    (m.attributes.team_position_name || "").toLowerCase() === "member" &&
-    m._teamName.includes("communications")
-  );
-  if (!c) return { name: null, personId: null };
-  return {
-    name: c.attributes.name || "Comms Member",
-    personId: c.relationships?.person?.data?.id || null,
-  };
+// Returns ALL people in Comms Member position (supports shadowing)
+function getCommsMemberInfoAll(members) {
+  return members
+    .filter(m =>
+      (m.attributes.team_position_name || "").toLowerCase() === "member" &&
+      m._teamName.includes("communications")
+    )
+    .map(m => ({
+      name: m.attributes.name || "Comms Member",
+      personId: m.relationships?.person?.data?.id || null,
+    }));
 }
 
 function buildHeader(plan) {
@@ -177,6 +195,14 @@ function itemMatches(item, keywords) {
   return keywords.some(kw => title.includes(kw));
 }
 
+// ── Helpers ──────────────────────────────────────────────
+
+// Returns true if value has real content (not empty, not a [placeholder])
+function hasRealContent(value) {
+  const v = (value || "").trim();
+  return v.length > 0 && !v.startsWith("[");
+}
+
 // ── Item-level Checks ────────────────────────────────────
 
 function isVerseFilled(item) {
@@ -184,14 +210,20 @@ function isVerseFilled(item) {
   const desc = (item.attributes.description || "").toLowerCase();
   const details = (item.attributes.html_details || "").trim();
   const hasPlaceholder = desc.includes("[bible verse]");
-  const hasDetails = details.length > 0;
-  return !hasPlaceholder || hasDetails;
+  return !hasPlaceholder || details.length > 0;
 }
 
+// Checks description, html_details, item notes, and attachments
 async function isAnnouncementFilled(planId, item) {
   if (!item) return false;
-  const details = (item.attributes.html_details || "").trim();
-  if (details.length > 0) return true;
+  // Check description
+  if (hasRealContent(item.attributes.description)) return true;
+  // Check html_details
+  if (hasRealContent(item.attributes.html_details)) return true;
+  // Check item notes (General/Speaker/Tech notes)
+  const hasNote = (item._notes || []).some(n => hasRealContent(n));
+  if (hasNote) return true;
+  // Check attachments
   const attachments = await getItemAttachments(planId, item.id);
   return attachments.length > 0;
 }
@@ -283,7 +315,8 @@ async function runSaturdayCheck(plan, items, teamMembers, emails) {
   const wordItem = items.find(i => itemMatches(i, ["word"]));
   const wordFilled = await isWordFilled(plan.id, wordItem);
 
-  const allGood = !versesMissing && songsFilled && announcementFilled && specialFilled && wordFilled;
+  // Special announcement is optional — does NOT block all-clear
+  const allGood = !versesMissing && songsFilled && announcementFilled && wordFilled;
 
   const subject = "📢 VCBA Saturday Final Check — " + planDate;
   const body = "📋 VCBA Sunday Readiness — FINAL SWEEP\n"
@@ -293,7 +326,7 @@ async function runSaturdayCheck(plan, items, teamMembers, emails) {
     + "🎵 Songs: " + (songsFilled ? "✅" : "❌") + " " + songCount + "/4\n\n"
     + "📣 Announcements:\n"
     + (announcementFilled ? "✅" : "❌") + " Announcement\n"
-    + (specialFilled ? "✅" : "❌") + " Special Announcement/Intro\n\n"
+    + (specialFilled ? "✅" : "➖") + " Special Announcement/Intro (optional)\n\n"
     + "✝️ Sermon:\n"
     + (wordFilled ? "✅" : "❌") + " Word (sermon notes/slides)\n\n"
     + (allGood
@@ -325,10 +358,12 @@ async function runCompletionCheck(plan, items, teamMembers, emails) {
   const wordItem = items.find(i => itemMatches(i, ["word"]));
   const wordFilled = await isWordFilled(plan.id, wordItem);
 
-  const allFilled = versesFilled && songsFilled && announcementFilled && specialFilled && wordFilled;
+  // Special announcement optional — does NOT block all-clear
+  const allFilled = versesFilled && songsFilled && announcementFilled && wordFilled;
 
   console.log("Verses: " + versesFilled + ", Songs: " + songsFilled
-    + ", Announcement: " + announcementFilled + ", Special: " + specialFilled
+    + ", Announcement: " + announcementFilled
+    + ", Special (optional): " + specialFilled
     + ", Word: " + wordFilled);
 
   if (!allFilled) {
@@ -354,7 +389,7 @@ async function runCompletionCheck(plan, items, teamMembers, emails) {
     + "✅ Benediction verse\n"
     + "✅ Songs\n"
     + "✅ Announcement\n"
-    + "✅ Special Announcement/Intro\n"
+    + (specialFilled ? "✅" : "➖") + " Special Announcement/Intro (optional)\n"
     + "✅ Word (sermon notes/slides)\n\n"
     + "📋 SC (" + scName + "): OOS is ready — please notify Tech Team to start building the PP7 playlist.";
 
@@ -384,20 +419,31 @@ async function main() {
   const scEmail = scPersonId ? await getPersonEmail(scPersonId) : null;
   console.log("SC Email: " + (scEmail || "NOT FOUND"));
 
-  // Proclaim (current visual tech — Technical Support team)
-  const { name: proclaimName, personId: proclaimId } = getProclaimInfo(teamMembers);
-  console.log("Proclaim: " + (proclaimName || "NOT FOUND") + " (ID: " + proclaimId + ")");
-  const proclaimEmail = proclaimId ? await getPersonEmail(proclaimId) : null;
-  console.log("Proclaim Email: " + (proclaimEmail || "NOT FOUND"));
+  // All Proclaim people
+  const proclaimPeople = getProclaimInfoAll(teamMembers);
+  const proclaimEmails = [];
+  for (const p of proclaimPeople) {
+    if (p.personId) {
+      const email = await getPersonEmail(p.personId);
+      console.log("Proclaim: " + p.name + " → " + (email || "NOT FOUND"));
+      if (email) proclaimEmails.push(email);
+    }
+  }
 
-  // Communications Member (comms/visual volunteer)
-  const { name: commsName, personId: commsId } = getCommsMemberInfo(teamMembers);
-  console.log("Comms Member: " + (commsName || "NOT FOUND") + " (ID: " + commsId + ")");
-  const commsEmail = commsId ? await getPersonEmail(commsId) : null;
-  console.log("Comms Email: " + (commsEmail || "NOT FOUND"));
+  // All Comms Member people
+  const commsPeople = getCommsMemberInfoAll(teamMembers);
+  const commsEmails = [];
+  for (const c of commsPeople) {
+    if (c.personId) {
+      const email = await getPersonEmail(c.personId);
+      console.log("Comms Member: " + c.name + " → " + (email || "NOT FOUND"));
+      if (email) commsEmails.push(email);
+    }
+  }
 
   // All recipients
-  const emails = [scEmail, proclaimEmail, commsEmail];
+  const emails = [scEmail, ...proclaimEmails, ...commsEmails];
+  console.log("Total recipients: " + emails.filter(Boolean).length);
 
   if (runDay === 5) await runFridayCheck(plan, items, teamMembers, emails);
   if (runDay === 6) await runSaturdayCheck(plan, items, teamMembers, emails);
