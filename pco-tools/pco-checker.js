@@ -213,22 +213,15 @@ function isVerseFilled(item) {
   return !hasPlaceholder || details.length > 0;
 }
 
-// Checks description, html_details, item notes, and attachments
+// Checks description, html_details, and attachments (not notes — those are instructions)
 async function isAnnouncementFilled(planId, item) {
   if (!item) return false;
-  console.log("DEBUG [" + item.attributes.title + "] desc=" + JSON.stringify(item.attributes.description)
-    + " details=" + JSON.stringify(item.attributes.html_details)
-    + " notes=" + JSON.stringify(item._notes));
   // Check description
   if (hasRealContent(item.attributes.description)) return true;
   // Check html_details
   if (hasRealContent(item.attributes.html_details)) return true;
-  // Check item notes (General/Speaker/Tech notes)
-  const hasNote = (item._notes || []).some(n => hasRealContent(n));
-  if (hasNote) return true;
   // Check attachments
   const attachments = await getItemAttachments(planId, item.id);
-  console.log("DEBUG [" + item.attributes.title + "] attachments=" + attachments.length);
   return attachments.length > 0;
 }
 
@@ -310,10 +303,10 @@ async function runSaturdayCheck(plan, items, teamMembers, emails) {
   const songsFilled = isSongsFilled(items);
   const songCount = items.filter(i => i.attributes.item_type === "song").length;
 
-  const announcementItem = items.find(i => itemMatches(i, ["announcement"]) && !itemMatches(i, ["special"]));
+  const announcementItem = items.find(i => i.attributes.item_type !== "header" && itemMatches(i, ["announcement"]) && !itemMatches(i, ["special"]));
   const announcementFilled = await isAnnouncementFilled(plan.id, announcementItem);
 
-  const specialItem = items.find(i => itemMatches(i, ["special announcement"]));
+  const specialItem = items.find(i => i.attributes.item_type !== "header" && itemMatches(i, ["special announcement"]));
   const specialFilled = await isAnnouncementFilled(plan.id, specialItem);
 
   const wordItem = items.find(i => itemMatches(i, ["word"]));
@@ -353,10 +346,10 @@ async function runCompletionCheck(plan, items, teamMembers, emails) {
 
   const songsFilled = isSongsFilled(items);
 
-  const announcementItem = items.find(i => itemMatches(i, ["announcement"]) && !itemMatches(i, ["special"]));
+  const announcementItem = items.find(i => i.attributes.item_type !== "header" && itemMatches(i, ["announcement"]) && !itemMatches(i, ["special"]));
   const announcementFilled = await isAnnouncementFilled(plan.id, announcementItem);
 
-  const specialItem = items.find(i => itemMatches(i, ["special announcement"]));
+  const specialItem = items.find(i => i.attributes.item_type !== "header" && itemMatches(i, ["special announcement"]));
   const specialFilled = await isAnnouncementFilled(plan.id, specialItem);
 
   const wordItem = items.find(i => itemMatches(i, ["word"]));
