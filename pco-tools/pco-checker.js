@@ -216,6 +216,9 @@ function isVerseFilled(item) {
 // Checks description, html_details, item notes, and attachments
 async function isAnnouncementFilled(planId, item) {
   if (!item) return false;
+  console.log("DEBUG [" + item.attributes.title + "] desc=" + JSON.stringify(item.attributes.description)
+    + " details=" + JSON.stringify(item.attributes.html_details)
+    + " notes=" + JSON.stringify(item._notes));
   // Check description
   if (hasRealContent(item.attributes.description)) return true;
   // Check html_details
@@ -225,6 +228,7 @@ async function isAnnouncementFilled(planId, item) {
   if (hasNote) return true;
   // Check attachments
   const attachments = await getItemAttachments(planId, item.id);
+  console.log("DEBUG [" + item.attributes.title + "] attachments=" + attachments.length);
   return attachments.length > 0;
 }
 
