@@ -33,153 +33,156 @@
     color: var(--text);
     font-family: 'Inter', sans-serif;
     min-height: 100vh;
-    padding: 2rem 1.5rem;
+    padding: 1.5rem;
     max-width: 1200px;
     margin: 0 auto;
-    line-height: 1.5;
+    line-height: 1.4;
   }
 
   .dashboard-section {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 2.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
   }
 
   .header {
-    margin-bottom: 2rem;
-    padding-bottom: 2rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1.25rem;
     border-bottom: 1px solid var(--border);
   }
-  .badge-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .badge-row { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
   .badge {
     font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 700;
     letter-spacing: 0.05em;
-    padding: 0.4rem 0.85rem;
-    border-radius: 6px;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
     text-transform: uppercase;
   }
-  .badge-yellow { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(217, 119, 6, 0.2); }
+  .badge-yellow { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(217, 119, 6, 0.15); }
   .badge-outline { background: transparent; color: var(--muted); border: 1px solid var(--border); }
   
   h1 {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-size: 1.75rem;
     font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.15;
+    letter-spacing: -0.02em;
     color: #0f172a;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
   }
-  .header-sub { font-size: 1rem; color: var(--muted); }
+  .header-sub { font-size: 0.9rem; color: var(--muted); }
 
   .bluf-card {
     background: var(--blue-dim);
-    border: 1px solid rgba(37, 99, 235, 0.2);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+    border: 1px solid rgba(37, 99, 235, 0.15);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
   }
   .bluf-title {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Space Mono', monospace;
     font-weight: 700;
     color: var(--blue);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
     text-transform: uppercase;
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     letter-spacing: 0.05em;
   }
   .bluf-card p {
     color: #1e3a8a;
-    font-size: 1.05rem;
+    font-size: 0.95rem;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
   }
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.75rem;
+    border-radius: 8px;
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
   }
   .card-top h3 {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.15rem;
   }
   .card-status {
     font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     text-transform: uppercase;
   }
   .card-cost {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 800;
     color: #0f172a;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.75rem;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 0.5rem;
   }
   .card-cost span {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: var(--muted);
     font-weight: 400;
   }
   .bullet-list { list-style: none; }
   .bullet-list li {
     position: relative;
-    padding-left: 1.5rem;
-    margin-bottom: 0.75rem;
-    font-size: 0.95rem;
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
     color: var(--muted);
+    line-height: 1.4;
   }
   .bullet-list li::before {
     content: "•";
     position: absolute;
     left: 0.25rem;
-    font-size: 1.2rem;
+    font-size: 1rem;
+    color: var(--muted2);
   }
   .bullet-list li strong { color: var(--text); }
 
   .strategy-box {
     background: var(--surface2);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 2rem;
+    border-radius: 6px;
+    padding: 1.25rem;
   }
   .strategy-title {
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     color: #0f172a;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
   .strategy-box p {
-    font-size: 0.975rem;
+    font-size: 0.875rem;
     color: var(--muted);
-    line-height: 1.6;
+    line-height: 1.5;
   }
 </style>
 </head>
 <body>
 
   <div class="dashboard-section">
+    <!-- HEADER -->
     <div class="header">
       <div class="badge-row">
         <span class="badge badge-yellow">Evaluation Results</span>
@@ -189,60 +192,68 @@
       <div class="header-sub">Analyzing administrative labor, platform overlap, and financial stewardship.</div>
     </div>
 
+    <!-- BLUF -->
     <div class="bluf-card">
       <div class="bluf-title">BLUF (Bottom Line Up Front)</div>
-      <p>Subsplash demands high upfront costs ($999 framework fee) but unloads all creation work onto our leadership team as complex "homework." Upgrading Planning Center (PCO) to paid modules resolves system constraints, leverages features our team is already testing, and secures $2,220 in annual savings to fund administrative help instead of platform software.</p>
+      <p>Subsplash forces a massive manual project onto our team for a $999 coaching fee, rather than building the app for us. Shifting completely to Planning Center (PCO) paid modules unifies our community workflow into one single app, overcomes free tier limits, and still saves the church $2,220 every single year to invest in help instead of software platforms.</p>
     </div>
 
+    <!-- THREE COLUMN PLATFORM EVALUATION -->
     <div class="grid">
-      <div class="card" style="border-top: 4px solid var(--red);">
+      
+      <!-- SUBSPLASH -->
+      <div class="card" style="border-top: 3px solid var(--red);">
         <div class="card-top">
           <h3 style="color: var(--red);">Subsplash</h3>
           <div class="card-status" style="color: #991b1b;">Verdict: No-Go</div>
-          <div class="card-cost">$999 <span>upfront tier fee</span></div>
+          <div class="card-cost">$999 <span>framework fee</span></div>
           <ul class="bullet-list">
-            <li><strong>Framework Only:</strong> The $999 is strictly a coaching package. They do not build or design our custom app pages.</li>
-            <li><strong>Heavy Homework:</strong> Leaves our volunteer teams with a massive manual workload to map, build, and deploy the interface.</li>
-            <li><strong>Premium Pricing:</strong> Expensive ongoing structural costs without any outsourced build support.</li>
+            <li><strong>Not a Custom Build:</strong> The $999 tier is just for coaching. They don't actually build out the pages or structure for us.</li>
+            <li><strong>Extra Homework:</strong> Turns into a massive administrative project where our team has to manually build the entire app from scratch.</li>
+            <li><strong>High Premium:</strong> High upfront cost without saving our team any actual technical labor.</li>
           </ul>
         </div>
       </div>
 
-      <div class="card" style="border-top: 4px solid var(--purple);">
+      <!-- PUSHPAY -->
+      <div class="card" style="border-top: 3px solid var(--purple);">
         <div class="card-top">
           <h3 style="color: var(--purple);">Pushpay</h3>
           <div class="card-status" style="color: #6b21a8;">Verdict: Status Quo</div>
-          <div class="card-cost">$399<span>/month baseline</span></div>
+          <div class="card-cost">$399<span>/month bill</span></div>
           <ul class="bullet-list">
-            <li><strong>Functional but Isolated:</strong> Operates reliably for standard financial management, but leaves user data fragmented.</li>
-            <li><strong>Split Apps:</strong> Forces the congregation to jump between separate apps for community workflows vs giving.</li>
-            <li><strong>High Overhead:</strong> Locks church resources into a premium price model ($4,788/yr total) for narrow features.</li>
+            <li><strong>Functional but Split:</strong> Works fine for basic needs, but leaves our community split across two different applications.</li>
+            <li><strong>High Cost:</strong> Keeps the church locked into a high recurring monthly payment layout.</li>
           </ul>
         </div>
       </div>
 
-      <div class="card" style="border-top: 4px solid var(--green); background: #fcfdfd;">
+      <!-- PLANNING CENTER -->
+      <div class="card" style="border-top: 3px solid var(--green); background: #fcfdfd;">
         <div class="card-top">
           <h3 style="color: var(--green);">Planning Center (PCO)</h3>
-          <div class="card-status" style="color: #166534;">Verdict: The Better Deal</div>
-          <div class="card-cost">+$2,220<span>/yr budget back</span></div>
+          <div class="card-status" style="color: #166534;">Verdict: Best Route</div>
+          <div class="card-cost">Saves $2,220<span>/year</span></div>
           <ul class="bullet-list">
-            <li><strong>Unified App Ecosystem:</strong> Consolidates everything into Church Center, an application our community already possesses.</li>
-            <li><strong>Low Learning Curve:</strong> Our team is already independently testing check-ins and registration layouts; adding paid tiers removes historical friction points.</li>
-            <li><strong>Workflow Protection:</strong> Keeps our critical Saturday night audio/visual technical preparation procedures running smoothly in a single software hub.</li>
+            <li><strong>One Single App:</strong> Unifies giving, events, and groups directly inside Church Center. We are explicitly not using kids check-in yet.</li>
+            <li><strong>Low Learning Curve:</strong> Since some folks are already playing around with check-ins and registrations, learning it won't be bad.</li>
+            <li><strong>Free Tier Bottleneck:</strong> The historical pushback we felt was simply because we used the free tier instead of paid modules. Unlocking paid tiers fixes the issue completely.</li>
           </ul>
         </div>
       </div>
+
     </div>
 
+    <!-- STRATEGIC RECOMMENDATION -->
     <div class="strategy-box">
       <div class="strategy-title">
-        <span>💡</span> Strategic Recommendation: People Over Platforms
+        <span>💡</span> Budget Strategy: People Over Platforms
       </div>
       <p>
-        The friction points experienced using Planning Center are not software limitations, but rather a byproduct of operating on restricted free tiers. Reallocating our budget to unlock paid PCO modules completely integrates our administration, protects baseline setups, and leaves a definitive <strong>$2,220 surplus every single year</strong>. Rather than spending capital on alternative software, this saved cash flow can fund a part-time administrative assistant or youth contractor to handle routine website edits, data updates, and basic layout tasks—keeping high-level technical leadership free from office desk work.
+        Instead of chasing a "perfect" software platform, keeping our tech costs low with Planning Center saves us <strong>$2,220 every single year</strong>. We can use that exact saved budget to hire a part-time church youth or a basic admin assistant to do the weekly data entry, app updates, and website text updates for the office. This keeps our leadership team entirely focused on strategy instead of getting bogged down in weekly administrative desk work.
       </p>
     </div>
+
   </div>
 
 </body>
