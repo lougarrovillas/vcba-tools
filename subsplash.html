@@ -39,7 +39,6 @@
     line-height: 1.5;
   }
 
-  /* DASHBOARD CARD CONTAINERS */
   .dashboard-section {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -49,7 +48,6 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
-  /* HEADER STYLE */
   .header {
     margin-bottom: 2rem;
     padding-bottom: 2rem;
@@ -79,7 +77,6 @@
   }
   .header-sub { font-size: 1rem; color: var(--muted); }
 
-  /* BLUF CARD */
   .bluf-card {
     background: var(--blue-dim);
     border: 1px solid rgba(37, 99, 235, 0.2);
@@ -101,7 +98,6 @@
     font-size: 1.05rem;
   }
 
-  /* PLATFORM GRID */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -142,9 +138,7 @@
     color: var(--muted);
     font-weight: 400;
   }
-  .bullet-list {
-    list-style: none;
-  }
+  .bullet-list { list-style: none; }
   .bullet-list li {
     position: relative;
     padding-left: 1.5rem;
@@ -158,11 +152,8 @@
     left: 0.25rem;
     font-size: 1.2rem;
   }
-  .bullet-list li strong {
-    color: var(--text);
-  }
+  .bullet-list li strong { color: var(--text); }
 
-  /* STRATEGY CALLOUT BOX */
   .strategy-box {
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -189,7 +180,6 @@
 <body>
 
   <div class="dashboard-section">
-    <!-- HEADER -->
     <div class="header">
       <div class="badge-row">
         <span class="badge badge-yellow">Evaluation Results</span>
@@ -199,16 +189,12 @@
       <div class="header-sub">Analyzing administrative labor, platform overlap, and financial stewardship.</div>
     </div>
 
-    <!-- BLUF -->
     <div class="bluf-card">
       <div class="bluf-title">BLUF (Bottom Line Up Front)</div>
       <p>Subsplash demands high upfront costs ($999 framework fee) but unloads all creation work onto our leadership team as complex "homework." Upgrading Planning Center (PCO) to paid modules resolves system constraints, leverages features our team is already testing, and secures $2,220 in annual savings to fund administrative help instead of platform software.</p>
     </div>
 
-    <!-- THREE COLUMN PLATFORM EVALUATION -->
     <div class="grid">
-      
-      <!-- SUBSPLASH -->
       <div class="card" style="border-top: 4px solid var(--red);">
         <div class="card-top">
           <h3 style="color: var(--red);">Subsplash</h3>
@@ -217,12 +203,11 @@
           <ul class="bullet-list">
             <li><strong>Framework Only:</strong> The $999 is strictly a coaching package. They do not build or design our custom app pages.</li>
             <li><strong>Heavy Homework:</strong> Leaves our volunteer teams with a massive manual workload to map, build, and deploy the interface.</li>
-            <li><strong>Premium Premium:</strong> Expensive ongoing structural costs without any outsourced build support.</li>
+            <li><strong>Premium Pricing:</strong> Expensive ongoing structural costs without any outsourced build support.</li>
           </ul>
         </div>
       </div>
 
-      <!-- PUSHPAY -->
       <div class="card" style="border-top: 4px solid var(--purple);">
         <div class="card-top">
           <h3 style="color: var(--purple);">Pushpay</h3>
@@ -236,7 +221,6 @@
         </div>
       </div>
 
-      <!-- PLANNING CENTER -->
       <div class="card" style="border-top: 4px solid var(--green); background: #fcfdfd;">
         <div class="card-top">
           <h3 style="color: var(--green);">Planning Center (PCO)</h3>
@@ -249,10 +233,8 @@
           </ul>
         </div>
       </div>
-
     </div>
 
-    <!-- STRATEGIC RECOMMENDATION -->
     <div class="strategy-box">
       <div class="strategy-title">
         <span>💡</span> Strategic Recommendation: People Over Platforms
@@ -261,7 +243,6 @@
         The friction points experienced using Planning Center are not software limitations, but rather a byproduct of operating on restricted free tiers. Reallocating our budget to unlock paid PCO modules completely integrates our administration, protects baseline setups, and leaves a definitive <strong>$2,220 surplus every single year</strong>. Rather than spending capital on alternative software, this saved cash flow can fund a part-time administrative assistant or youth contractor to handle routine website edits, data updates, and basic layout tasks—keeping high-level technical leadership free from office desk work.
       </p>
     </div>
-
   </div>
 
 </body>
