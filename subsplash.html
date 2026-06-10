@@ -11,11 +11,11 @@
     --surface: #ffffff;
     --surface2: #f1f5f9;
     --border: #e2e8f0;
-    --accent: #d97706; /* Darkened slightly for better readability on light bg */
+    --accent: #d97706; 
     --accent-bg: #fef3c7;
-    --green: #16a34a; /* Darkened slightly for text contrast */
+    --green: #16a34a; 
     --green-dim: #dcfce7;
-    --red: #dc2626; /* Darkened slightly for text contrast */
+    --red: #dc2626; 
     --red-dim: #fee2e2;
     --blue: #2563eb;
     --blue-dim: #dbeafe;
@@ -84,3 +84,185 @@
     background: var(--blue-dim);
     border: 1px solid rgba(37, 99, 235, 0.2);
     border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .bluf-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    color: var(--blue);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+  .bluf-card p {
+    color: #1e3a8a;
+    font-size: 1.05rem;
+  }
+
+  /* PLATFORM GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .card-top h3 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .card-status {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+  .card-cost {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 1.25rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .card-cost span {
+    font-size: 0.875rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .bullet-list {
+    list-style: none;
+  }
+  .bullet-list li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .bullet-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0.25rem;
+    font-size: 1.2rem;
+  }
+  .bullet-list li strong {
+    color: var(--text);
+  }
+
+  /* STRATEGY CALLOUT BOX */
+  .strategy-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+  .strategy-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #0f172a;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .strategy-box p {
+    font-size: 0.975rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+  <div class="dashboard-section">
+    <!-- HEADER -->
+    <div class="header">
+      <div class="badge-row">
+        <span class="badge badge-yellow">Evaluation Results</span>
+        <span class="badge badge-outline">VCBA Ministry Systems</span>
+      </div>
+      <h1>VCBA — Tech & Budget Evaluation Dashboard</h1>
+      <div class="header-sub">Analyzing administrative labor, platform overlap, and financial stewardship.</div>
+    </div>
+
+    <!-- BLUF -->
+    <div class="bluf-card">
+      <div class="bluf-title">BLUF (Bottom Line Up Front)</div>
+      <p>Subsplash demands high upfront costs ($999 framework fee) but unloads all creation work onto our leadership team as complex "homework." Upgrading Planning Center (PCO) to paid modules resolves system constraints, leverages features our team is already testing, and secures $2,220 in annual savings to fund administrative help instead of platform software.</p>
+    </div>
+
+    <!-- THREE COLUMN PLATFORM EVALUATION -->
+    <div class="grid">
+      
+      <!-- SUBSPLASH -->
+      <div class="card" style="border-top: 4px solid var(--red);">
+        <div class="card-top">
+          <h3 style="color: var(--red);">Subsplash</h3>
+          <div class="card-status" style="color: #991b1b;">Verdict: No-Go</div>
+          <div class="card-cost">$999 <span>upfront tier fee</span></div>
+          <ul class="bullet-list">
+            <li><strong>Framework Only:</strong> The $999 is strictly a coaching package. They do not build or design our custom app pages.</li>
+            <li><strong>Heavy Homework:</strong> Leaves our volunteer teams with a massive manual workload to map, build, and deploy the interface.</li>
+            <li><strong>Premium Premium:</strong> Expensive ongoing structural costs without any outsourced build support.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- PUSHPAY -->
+      <div class="card" style="border-top: 4px solid var(--purple);">
+        <div class="card-top">
+          <h3 style="color: var(--purple);">Pushpay</h3>
+          <div class="card-status" style="color: #6b21a8;">Verdict: Status Quo</div>
+          <div class="card-cost">$399<span>/month baseline</span></div>
+          <ul class="bullet-list">
+            <li><strong>Functional but Isolated:</strong> Operates reliably for standard financial management, but leaves user data fragmented.</li>
+            <li><strong>Split Apps:</strong> Forces the congregation to jump between separate apps for community workflows vs giving.</li>
+            <li><strong>High Overhead:</strong> Locks church resources into a premium price model ($4,788/yr total) for narrow features.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- PLANNING CENTER -->
+      <div class="card" style="border-top: 4px solid var(--green); background: #fcfdfd;">
+        <div class="card-top">
+          <h3 style="color: var(--green);">Planning Center (PCO)</h3>
+          <div class="card-status" style="color: #166534;">Verdict: The Better Deal</div>
+          <div class="card-cost">+$2,220<span>/yr budget back</span></div>
+          <ul class="bullet-list">
+            <li><strong>Unified App Ecosystem:</strong> Consolidates everything into Church Center, an application our community already possesses.</li>
+            <li><strong>Low Learning Curve:</strong> Our team is already independently testing check-ins and registration layouts; adding paid tiers removes historical friction points.</li>
+            <li><strong>Workflow Protection:</strong> Keeps our critical Saturday night audio/visual technical preparation procedures running smoothly in a single software hub.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- STRATEGIC RECOMMENDATION -->
+    <div class="strategy-box">
+      <div class="strategy-title">
+        <span>💡</span> Strategic Recommendation: People Over Platforms
+      </div>
+      <p>
+        The friction points experienced using Planning Center are not software limitations, but rather a byproduct of operating on restricted free tiers. Reallocating our budget to unlock paid PCO modules completely integrates our administration, protects baseline setups, and leaves a definitive <strong>$2,220 surplus every single year</strong>. Rather than spending capital on alternative software, this saved cash flow can fund a part-time administrative assistant or youth contractor to handle routine website edits, data updates, and basic layout tasks—keeping high-level technical leadership free from office desk work.
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>
