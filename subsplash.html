@@ -3,545 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VCBA — Tech & Budget Evaluation Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&family=Plus+Jakarta+Sans:wght=600;700;800&family=Space+Mono:wght=400;700&display=swap" rel="stylesheet">
+<title>VCBA | Strategic Platform Assessment</title>
 <style>
-  :root {
-    --bg: #0b0f19;
-    --surface: #131c2e;
-    --surface2: #1e293b;
-    --border: #24324d;
-    --accent: #f59e0b;
-    --accent-dim: rgba(245, 158, 11, 0.1);
-    --green: #10b981;
-    --green-dim: rgba(16, 185, 129, 0.1);
-    --red: #ef4444;
-    --red-dim: rgba(239, 68, 68, 0.1);
-    --blue: #3b82f6;
-    --blue-dim: rgba(59, 130, 246, 0.1);
-    --purple: #8b5cf6;
-    --purple-dim: rgba(139, 92, 246, 0.1);
-    --text: #f8fafc;
-    --muted: #64748b;
-    --muted2: #94a3b8;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    padding: 2rem 1rem;
-    max-width: 1100px;
-    margin: 0 auto;
-    line-height: 1.4;
-  }
-
-  /* WEB VISUAL PAGE BLOCKS */
-  .web-page-block {
-    background: rgba(19, 28, 46, 0.4);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 2.5rem;
-  }
-
-  /* HEADER */
-  .header {
-    margin-bottom: 1.75rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .badge-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
-  .badge {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    padding: 0.25rem 0.6rem;
-    border-radius: 4px;
-    text-transform: uppercase;
-  }
-  .badge-yellow { background: var(--accent); color: #0b0f19; }
-  .badge-outline { background: transparent; color: var(--muted2); border: 1px solid var(--border); }
-  h1 {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: clamp(1.75rem, 4vw, 2.5rem);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-  }
-  .header-sub {
-    font-size: 0.9rem;
-    color: var(--muted2);
-  }
-
-  /* BLUF BANNER */
-  .bluf-card {
-    background: linear-gradient(135deg, var(--surface), #1b183a);
-    border: 1px solid var(--blue);
-    border-radius: 10px;
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
-  }
-  .bluf-title {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--blue);
-    margin-bottom: 0.35rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  /* COST COMPARISON CHART */
-  .chart-container {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.25rem;
-  }
-  .chart-row { margin-bottom: 1rem; }
-  .chart-row:last-child { margin-bottom: 0; }
-  .chart-info { display: flex; justify-content: space-between; margin-bottom: 0.25rem; font-size: 0.85rem; font-weight: 600; }
-  .chart-bar-bg { background: var(--surface2); height: 20px; border-radius: 4px; overflow: hidden; display: flex; align-items: center; }
-  .chart-bar { height: 100%; border-radius: 4px; }
-  .bar-pco { background: var(--green); width: 39%; }
-  .bar-pushpay { background: var(--accent); width: 73%; }
-  .bar-subsplash { background: var(--red); width: 100%; }
-
-  /* COMBINED 1 & 2 TOP SECTION DISPLAY GRID */
-  .top-grid {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 1.5rem;
-    align-items: start;
-  }
-
-  /* APP CLUTTER VISUAL */
-  .app-comparison-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .app-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0.85rem 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  .app-card-left { text-align: left; }
-  .app-card-title { font-size: 0.75rem; font-family: 'Space Mono', monospace; color: var(--muted2); text-transform: uppercase; }
-  .app-card-status { font-size: 0.95rem; font-weight: 700; }
-  .app-flex { display: flex; gap: 0.5rem; }
-  .app-mock {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.4rem 0.6rem;
-    width: 85px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-align: center;
-    line-height: 1.2;
-  }
-  .app-mock span { display: block; font-size: 0.55rem; color: var(--muted2); margin-top: 0.15rem; font-weight: 400; }
-
-  /* MATRIX TABLE */
-  .table-container {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-  }
-  table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
-  th, td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
-  th { background: var(--surface2); font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; }
-  tr:last-child td { border-bottom: none; }
-  .status-tag { display: inline-block; padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 600; font-size: 0.75rem; }
-  .status-green { background: var(--green-dim); color: var(--green); }
-  .status-red { background: var(--red-dim); color: var(--red); }
-  .status-yellow { background: var(--accent-dim); color: var(--accent); }
-
-  /* SECTION LABELS */
-  .section { margin-bottom: 1.5rem; }
-  .section:last-child { margin-bottom: 0; }
-  .section-label {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  /* BOXES & ALERTS */
-  .alert-card {
-    background: linear-gradient(135deg, var(--surface), rgba(239, 68, 68, 0.03));
-    border: 1px solid var(--red);
-    border-radius: 10px;
-    padding: 1.25rem;
-    margin-bottom: 1.25rem;
-  }
-  .alert-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 700; color: var(--red); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-   
-  .upgrade-banner {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--accent);
-    border-radius: 10px;
-    padding: 1.25rem;
-    margin-bottom: 1.5rem;
-  }
-  .upgrade-banner h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 700; color: var(--accent); margin-bottom: 0.35rem; }
-  .upgrade-banner p { font-size: 0.85rem; color: var(--muted2); line-height: 1.5; }
-
-  /* FEATURE CARDS GRID */
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-    gap: 1rem;
-  }
-  .feature-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .feature-head { padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid var(--border); }
-  .feature-emoji { font-size: 1.1rem; }
-  .feature-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; font-weight: 700; }
-  .feature-body { padding: 1rem; }
-  
-  .pro-con-item { display: flex; gap: 0.6rem; align-items: flex-start; margin-bottom: 0.5rem; font-size: 0.82rem; line-height: 1.4; color: var(--muted2); }
-  .pro-con-item:last-child { margin-bottom: 0; }
-  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 0.25rem; display: inline-block; }
-  .dot-green { background-color: #10b981; }
-  .dot-red { background-color: #ef4444; }
-  .dot-yellow { background-color: #f59e0b; }
-
-  /* PROCESS STEPS STACK */
-  .process-steps { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; }
-  .process-step { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; display: flex; gap: 1rem; align-items: center; }
-  .step-num { font-family: 'Space Mono', monospace; font-size: 0.65rem; font-weight: 700; color: var(--accent); background: var(--accent-dim); padding: 0.2rem 0.5rem; border-radius: 4px; flex-shrink: 0; }
-  .step-details { display: flex; flex-direction: column; }
-  .step-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--text); }
-  .step-desc { font-size: 0.82rem; color: var(--muted2); }
-
-  /* SYSTEM OWNERSHIP GRID */
-  .onboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-  .onboard-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; display: flex; flex-direction: column; justify-content: space-between; }
-  .onboard-who { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
-  .onboard-what { font-size: 0.82rem; color: var(--muted2); line-height: 1.5; margin-bottom: 0.75rem; }
-  .onboard-tag { font-family: 'Space Mono', monospace; font-size: 0.6rem; padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700; width: fit-content; }
-  .tag-new { background: var(--green-dim); color: var(--green); }
-  .tag-migrate { background: var(--accent-dim); color: var(--accent); }
-  .tag-tech { background: var(--blue-dim); color: var(--blue); }
-
-  /* QUESTIONS STACK */
-  .questions-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1rem; }
-  .question-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; display: flex; gap: 1rem; }
-  .q-icon { font-size: 1.1rem; }
-  .q-content { flex: 1; }
-  .q-tag { display: inline-block; font-family: 'Space Mono', monospace; font-size: 0.6rem; padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 700; margin-bottom: 0.35rem; }
-  .q-cost { background: var(--accent-dim); color: var(--accent); }
-  .q-tech { background: var(--blue-dim); color: var(--blue); }
-  .q-text { font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 0.15rem; }
-  .q-why { font-size: 0.8rem; color: var(--muted2); line-height: 1.4; }
-
-  .footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--muted); text-align: center; letter-spacing: 0.05em; }
-
-  @media (max-width: 900px) {
-    .top-grid { grid-template-columns: 1fr; }
-    .questions-list { grid-template-columns: 1fr; }
-  }
+  :root { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --text-muted: #94a3b8; --accent: #3b82f6; --border: #334155; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 2rem; max-width: 1000px; margin: 0 auto; line-height: 1.6; }
+  h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+  .card { background: var(--card); border: 1px solid var(--border); padding: 1.5rem; border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; margin: 2rem 0; background: var(--card); }
+  th, td { padding: 1rem; border: 1px solid var(--border); text-align: left; }
+  th { background: #0f172a; }
+  .section { margin-bottom: 2.5rem; }
 </style>
 </head>
 <body>
 
-<div class="web-page-block">
-  <div class="header">
-    <div class="badge-row">
-      <span class="badge badge-yellow">VCBA Leadership Briefing</span>
-      <span class="badge badge-outline">Tech Stack &amp; Budget Evaluation</span>
-      <span class="badge badge-outline">June 2026</span>
-    </div>
-    <h1>Church Architecture &amp; Strategy</h1>
-    <p class="header-sub">An objective operations, cost, and capacity assessment for Pastor Neil &amp; Leadership</p>
+<h1>Strategic Platform Assessment</h1>
+<p>An operational overview of technology options for VCBA, June 2026.</p>
+
+<div class="grid">
+  <div class="card">
+    <h3>Option 1: Pushpay + PCO</h3>
+    <p>Maintains existing financial tools while utilizing Planning Center (PCO) for scheduling and check-in.</p>
   </div>
-
-  <div class="bluf-card">
-    <div class="bluf-title">📊 Bottom-Line Up Front</div>
-    <p style="font-size: 0.88rem; line-height: 1.5;">
-      <strong>Option 2 (Fully PCO Ecosystem)</strong> saves the church <strong style="color: var(--green);">$2,220 every single year</strong> and unifies our congregation data into one single application, but requires a one-time project to switch recurring donors. <strong>Option 1 (Pushpay)</strong> preserves the status quo with zero friction but leaves us with high monthly bills and split applications. <strong style="color: var(--red); font-weight: 700;">Option 3 (Subsplash) is an absolute financial and workload dead-end.</strong>
-    </p>
+  <div class="card">
+    <h3>Option 2: Unified PCO</h3>
+    <p>Consolidates giving, database, and scheduling into the Planning Center ecosystem.</p>
   </div>
-
-  <div class="top-grid">
-    <div class="section">
-      <div class="section-label">💰 1. Cost Overview (Annual Spend)</div>
-      <div class="chart-container">
-        <div class="chart-row">
-          <div class="chart-info"><span class="chart-label">Option 2 (Fully PCO Ecosystem)</span><span class="chart-value" style="color: var(--green);">$2,568/yr</span></div>
-          <div class="chart-bar-bg"><div class="chart-bar bar-pco"></div></div>
-        </div>
-        <div class="chart-row">
-          <div class="chart-info"><span class="chart-label">Option 1 (Pushpay + Basic PCO)</span><span class="chart-value" style="color: var(--accent);">$4,788/yr</span></div>
-          <div class="chart-bar-bg"><div class="chart-bar bar-pushpay"></div></div>
-        </div>
-        <div class="chart-row">
-          <div class="chart-info"><span class="chart-label">Option 3 (Subsplash One Tier)</span><span class="chart-value" style="color: var(--red);">$6,507/yr *</span></div>
-          <div class="chart-bar-bg"><div class="chart-bar bar-subsplash"></div></div>
-        </div>
-        <p style="font-size: 0.72rem; color: var(--muted); margin-top: 0.65rem;">
-          * Subsplash annual total includes their mandatory $999 upfront setup fee.
-        </p>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">📱 2. Congregation Experience (App Clutter)</div>
-      <div class="app-comparison-stack">
-        <div class="app-card" style="border-left: 3px solid var(--accent);">
-          <div class="app-card-left">
-            <div class="app-card-title">Option 1</div>
-            <div class="app-card-status" style="color: var(--accent);">Two Apps Required</div>
-          </div>
-          <div class="app-flex">
-            <div class="app-mock">Pushpay<span>Giving</span></div>
-            <div class="app-mock">Church Ctr<span>Check-In</span></div>
-          </div>
-        </div>
-        <div class="app-card" style="border-left: 3px solid var(--green); background: linear-gradient(135deg, var(--surface), rgba(16,185,129,0.02));">
-          <div class="app-card-left">
-            <div class="app-card-title">Option 2</div>
-            <div class="app-card-status" style="color: var(--green);">ONE Single App</div>
-          </div>
-          <div class="app-flex">
-            <div class="app-mock" style="border-color: var(--green); width: 100px;">Church Center<span>All-In-One</span></div>
-          </div>
-        </div>
-        <div class="app-card" style="border-left: 3px solid var(--red);">
-          <div class="app-card-left">
-            <div class="app-card-title">Option 3</div>
-            <div class="app-card-status" style="color: var(--red);">Split Systems</div>
-          </div>
-          <div class="app-flex">
-            <div class="app-mock">VCBA App<span>Media</span></div>
-            <div class="app-mock">PCO App<span>Schedules</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="card">
+    <h3>Option 3: Subsplash</h3>
+    <p>Provides a custom-branded mobile app and integrated media syndication.</p>
   </div>
 </div>
 
-<div class="web-page-block">
-  <div class="section">
-    <div class="section-label">⚖️ 3. Quick Comparison Matrix</div>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>The Target</th>
-            <th>Option 1: Pushpay + PCO</th>
-            <th>Option 2: Fully PCO</th>
-            <th>Option 3: Subsplash</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Monthly Bill</strong></td>
-            <td>$399 / mo</td>
-            <td><span class="status-tag status-green">$214 / mo (Lowest)</span></td>
-            <td><span class="status-tag status-red">$459 / mo (Highest)</span></td>
-          </tr>
-          <tr>
-            <td><strong>Upfront Setup Fee</strong></td>
-            <td>$0</td>
-            <td><span class="status-tag status-green">$0</span></td>
-            <td><span class="status-tag status-red">$999 to $5,000+</span></td>
-          </tr>
-          <tr>
-            <td><strong>Donor Migration?</strong></td>
-            <td><span class="status-tag status-green">No Friction</span></td>
-            <td><span class="status-tag status-yellow">⚠️ 3-4 Wk Switch</span></td>
-            <td><span class="status-tag status-yellow">⚠️ 3-4 Wk Switch</span></td>
-          </tr>
-          <tr>
-            <td><strong>Automated Discipleship?</strong></td>
-            <td>No (Manual CSVs)</td>
-            <td><span class="status-tag status-green">Yes (Self-running)</span></td>
-            <td><span class="status-tag status-red">No (Manual Entry)</span></td>
-          </tr>
-          <tr>
-            <td><strong>Bypasses Bluehost Outages?</strong></td>
-            <td>No (Stays on Bluehost)</td>
-            <td><span class="status-tag status-green">Yes (Cloud Hosted)</span></td>
-            <td><span class="status-tag status-green">Yes (Replaces Hosting)</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+<table>
+  <tr>
+    <th>Feature</th><th>Pushpay + PCO</th><th>Unified PCO</th><th>Subsplash</th>
+  </tr>
+  <tr>
+    <td>Annual Cost</td><td>$4,788</td><td>$2,568</td><td>$6,507*</td>
+  </tr>
+  <tr>
+    <td>App Presence</td><td>Split Tools</td><td>Church Center App</td><td>Custom Branded App</td>
+  </tr>
+  <tr>
+    <td>Data Flow</td><td>Manual Integration</td><td>Native/Automatic</td><td>Manual Integration</td>
+  </tr>
+</table>
 
-  <div class="section">
-    <div class="section-label">🚨 4. Critical Discovery: The Subsplash Onboarding Trap &amp; Feature Assessment</div>
-    <div class="alert-card">
-      <div class="alert-title">⚠️ The $999 vs. $5,000 Real Cost Breakdown</div>
-      <p style="font-size: 0.85rem; line-height: 1.5; margin-bottom: 0.75rem;">
-        During deep file verification, we uncovered a hidden barrier in Subsplash's pricing model. The heavily marketed <strong>$999 package is exclusively a baseline structural coaching fee</strong>. It does not buy you an outsourced build.
-      </p>
-      <div style="background: rgba(0,0,0,0.18); padding: 0.85rem; border-radius: 6px; font-size: 0.8rem; line-height: 1.4; color: var(--muted2);">
-        • <strong>The $999 "Standard" Tier:</strong> Subsplash sets up your legal Apple/Google Developer wrappers, but leaves 100% of the graphic design, data migration, page building, and calendar setups on our desks as a manual homework task.<br>
-        • <strong>The $5,000 "Comprehensive" Tier:</strong> If we want them to actively migrate our data, build out content structures, and handle the layout configuration for us, they shift the church into a luxury enterprise contract.
-      </div>
-    </div>
-
-    <div class="upgrade-banner">
-      <h3>💡 Why Subsplash Looks Good on Paper — But Fails Our Ministry</h3>
-      <p>Subsplash pitches itself to smaller churches by offering slightly lower credit card rates (2.3% vs. Pushpay's 2.9%). However, for a congregation of ~250 people, Planning Center completely destroys both paradigms. PCO Giving has a completely free base tier ($0/mo) and charges a flat $0.25 fee for bank ACH transfers. Spending $5,000 upfront or paying a massive $459 text-and-app premium just to get slightly cheaper card transaction rates is a losing strategy for VCBA's resources.</p>
-    </div>
-
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-head" style="background: var(--blue-dim);"><span class="feature-emoji">📱</span><span class="feature-title" style="color: var(--blue);">Church App Tier</span></div>
-        <div class="feature-body">
-          <div class="pro-con-item"><span class="dot dot-green"></span>Custom branded app published under VCBA's name on App Store &amp; Google Play.</div>
-          <div class="pro-con-item"><span class="dot dot-green"></span>Subsplash handles all backend OS updates and store compliance regulations.</div>
-          <div class="pro-con-item"><span class="dot dot-red"></span>Onboarding specialist acts as a coach, not a designer; we do the construction.</div>
-        </div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-head" style="background: var(--green-dim);"><span class="feature-emoji">💰</span><span class="feature-title" style="color: var(--green);">Giving Processing</span></div>
-        <div class="feature-body">
-          <div class="pro-con-item"><span class="dot dot-green"></span>Integrated giving portals sitting right inside the custom streaming window.</div>
-          <div class="pro-con-item"><span class="dot dot-yellow"></span>2.3% rate looks better than Pushpay, but loses heavily against PCO ACH.</div>
-          <div class="pro-con-item"><span class="dot dot-red"></span>Requires all ~250 attendees to completely delete profiles and re-enter bank info.</div>
-        </div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-head" style="background: var(--accent-dim);"><span class="feature-emoji">🌐</span><span class="feature-title" style="color: var(--accent);">SnapPages Website</span></div>
-        <div class="feature-body">
-          <div class="pro-con-item"><span class="dot dot-green"></span>Drag-and-drop structural design intended to prevent developer reliance.</div>
-          <div class="pro-con-item"><span class="dot dot-red"></span>Completely template-locked with limited deep customization options.</div>
-          <div class="pro-con-item"><span class="dot dot-red"></span>100% self-serve build framework not covered under standard onboarding calls.</div>
-        </div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-head" style="background: rgba(232,123,71,0.1);"><span class="feature-emoji">📺</span><span class="feature-title" style="color: #e87b47;">Livestreaming Sync</span></div>
-        <div class="feature-body">
-          <div class="pro-con-item"><span class="dot dot-green"></span>Simultaneously syndicates stream feeds to custom apps, Roku, Apple TV, and web.</div>
-          <div class="pro-con-item"><span class="dot dot-green"></span>Supports secure RTMP links directly from ProPresenter 7 with zero hassle.</div>
-          <div class="pro-con-item"><span class="dot dot-green"></span>Saves $20/mo by completely wiping out our standalone Restream subscription.</div>
-        </div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-head" style="background: var(--purple-dim);"><span class="feature-emoji">📅</span><span class="feature-title" style="color: var(--purple);">Events &amp; Check-Ins</span></div>
-        <div class="feature-body">
-          <div class="pro-con-item"><span class="dot dot-green"></span>Centralizes church-wide calendars and tracks basic registrations.</div>
-          <div class="pro-con-item"><span class="dot dot-red"></span>Duplicating recurring items across distinct calendars is tedious and clunky.</div>
-          <div class="pro-con-item"><span class="dot dot-red"></span>Kids Check-In is a brand new, unvetted feature requiring vast layout training.</div>
-        </div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-head" style="background: rgba(148,163,184,0.1);"><span class="feature-emoji">⚠️</span><span class="feature-title">Core Data Constraints</span></div>
-        <div class="feature-body">
-          <div class="pro-con-item"><span class="dot dot-red"></span><strong>Database Split:</strong> ChMS tracking is Subsplash's weakest feature.</div>
-          <div class="pro-con-item"><span class="dot dot-red"></span>Because we must run Planning Center Services for our Saturday night technical preparations and production scripts, switching to Subsplash forces a permanent split-database system.</div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="section">
+  <h3>Operational Considerations</h3>
+  <ul>
+    <li><strong>Congregation Migration:</strong> Options 2 and 3 require users to transition their recurring giving profiles.</li>
+    <li><strong>SMS & Email:</strong> Subsplash and PCO both support SMS/email workflows, though execution methods and integrations with existing ChMS data differ.</li>
+    <li><strong>Check-in:</strong> PCO offers a mature, widely-integrated check-in system. Subsplash offers a newer check-in module with limited third-party review data available.</li>
+  </ul>
 </div>
 
-<div class="web-page-block">
-  <div class="section">
-    <div class="section-label">🎓 6. Onboarding — $999 Standard — Process Realities</div>
-    <div class="process-steps">
-      <div class="process-step">
-        <span class="step-num">STEP 1</span>
-        <div class="step-details">
-          <div class="step-title">Specialist Sync &amp; Video Academy Block</div>
-          <div class="step-desc">Provides a 45-day window with a Google Meet specialist alongside self-paced video courses. Focus is limited strictly to store submission mechanics.</div>
-        </div>
-      </div>
-      <div class="process-step">
-        <span class="step-num">STEP 2</span>
-        <div class="step-details">
-          <div class="step-title">App Wrappers &amp; Account Deployment</div>
-          <div class="step-desc">Upload church brand marks and configure developer portals. The specialist provides guidance but does NOT build the app infrastructure; our internal team handles the build work between calls.</div>
-        </div>
-      </div>
-      <div class="process-step">
-        <span class="step-num">STEP 3</span>
-        <div class="step-details">
-          <div class="step-title">Independent Web Build &amp; Review Gate</div>
-          <div class="step-desc">Giving pipelines are pushed to a separate pipeline manager. Website builds via SnapPages are entirely self-serve and excluded from live meeting assistance.</div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="section">
+  <h3>Onboarding Tier Comparison (Subsplash)</h3>
+  <ul>
+    <li><strong>Standard ($999):</strong> Provides setup coaching and access to training materials; requires internal team to manage all content assembly and layout.</li>
+    <li><strong>Streamlined/Comprehensive:</strong> Higher investment tiers that include expanded assistance for data migration and structural configuration.</li>
+  </ul>
+</div>
 
-  <div class="section">
-    <div class="section-label">👤 7. System Ownership &amp; Team Impact</div>
-    <div class="onboard-grid">
-      <div class="onboard-card">
-        <div>
-          <div class="onboard-who">Tech Lead</div>
-          <div class="onboard-what">Configures stream pipelines, hooks up the RTMP endpoint in ProPresenter 7, and tests syndicated channels. Flat setup curve, low continuous friction.</div>
-        </div>
-        <span class="onboard-tag tag-tech">TECH OWNED</span>
-      </div>
-      <div class="onboard-card">
-        <div>
-          <div class="onboard-who">Service &amp; KidMin Teams</div>
-          <div class="onboard-what">Faced with a massive operational change. Must learn a completely unvetted check-in console and manually migrate calendars away from historical tools.</div>
-        </div>
-        <span class="onboard-tag tag-new">HEAVY TRAINING</span>
-      </div>
-      <div class="onboard-card">
-        <div>
-          <div class="onboard-who">The Congregation (~250)</div>
-          <div class="onboard-what">The massive invisible hurdle. Requires every household to delete their existing apps, create new accounts, and re-link credit cards or routing profiles.</div>
-        </div>
-        <span class="onboard-tag tag-migrate">MAXIMUM FRICTION</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-label">❓ 8. Existing Questions for the Subsplash Representative</div>
-    <div class="questions-list">
-      <div class="question-item">
-        <span class="q-icon">📄</span>
-        <div class="q-content">
-          <span class="q-tag q-cost">CONTRACT SECURITY</span>
-          <div class="q-text">What is the locked contract timeline, and what are the precise exit penalty clauses?</div>
-          <div class="q-why">Industry feedback shows 12-to-24-month locked commitments with punitive early termination fees that expose small ministries to severe financial risk.</div>
-        </div>
-      </div>
-      <div class="question-item">
-        <span class="q-icon">🖥️</span>
-        <div class="q-content">
-          <span class="q-tag q-tech">TECHNICAL INTEGRATION</span>
-          <div class="q-text">Can we keep Planning Center Services fully running without system conflicts?</div>
-          <div class="q-why">Because our Saturday night tech preparation relies entirely on PCO Services for volunteer schedules and presentation flows, we need a guarantee that your sales ecosystem won't pressure us to migrate internal data onto your weaker ChMS.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">VICTORY CHURCH OF THE BAY AREA &bull; TECH TEAM &bull; JUNE 2026</div>
+<div class="section">
+  <h3>Technical Discovery Questions</h3>
+  <ul>
+    <li><strong>Ownership:</strong> Does the church retain full ownership of the app store presence and developer account?</li>
+    <li><strong>SMS/Email:</strong> What are the specific costs and delivery limits for mass communication?</li>
+    <li><strong>Check-in:</strong> Does the check-in module require a physical signature printout for security?</li>
+    <li><strong>Security:</strong> What are the protocols regarding data breach notification and recovery?</li>
+    <li><strong>Trial/Demo:</strong> Is there a sandboxed trial version available for technical review?</li>
+    <li><strong>Session Recording:</strong> Does the platform allow for local session recording/archiving?</li>
+    <li><strong>Support:</strong> Is a dedicated contact number provided for technical emergencies?</li>
+  </ul>
 </div>
 
 </body>
