@@ -6,9 +6,9 @@
 <title>VCBA | Strategic Platform Assessment</title>
 <style>
   :root { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --text-muted: #94a3b8; --accent: #3b82f6; --border: #334155; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 2rem; max-width: 1000px; margin: 0 auto; line-height: 1.6; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 2rem; max-width: 900px; margin: 0 auto; line-height: 1.6; }
   h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
   .card { background: var(--card); border: 1px solid var(--border); padding: 1.5rem; border-radius: 8px; }
   table { width: 100%; border-collapse: collapse; margin: 2rem 0; background: var(--card); }
   th, td { padding: 1rem; border: 1px solid var(--border); text-align: left; }
@@ -23,12 +23,12 @@
 
 <div class="grid">
   <div class="card">
-    <h3>Option 1: Pushpay + PCO</h3>
-    <p>Maintains existing financial tools while utilizing Planning Center (PCO) for scheduling and check-in.</p>
+    <h3>Option 1: Pushpay + Planning Center</h3>
+    <p>Maintains existing financial tools while utilizing Planning Center for scheduling and check-in.</p>
   </div>
   <div class="card">
-    <h3>Option 2: Unified PCO</h3>
-    <p>Consolidates giving, database, and scheduling into the Planning Center ecosystem.</p>
+    <h3>Option 2: Unified Planning Center</h3>
+    <p>Consolidates giving, database, and scheduling into the full Planning Center suite.</p>
   </div>
   <div class="card">
     <h3>Option 3: Subsplash</h3>
@@ -36,47 +36,51 @@
   </div>
 </div>
 
-<table>
-  <tr>
-    <th>Feature</th><th>Pushpay + PCO</th><th>Unified PCO</th><th>Subsplash</th>
-  </tr>
-  <tr>
-    <td>Annual Cost</td><td>$4,788</td><td>$2,568</td><td>$6,507*</td>
-  </tr>
-  <tr>
-    <td>App Presence</td><td>Split Tools</td><td>Church Center App</td><td>Custom Branded App</td>
-  </tr>
-  <tr>
-    <td>Data Flow</td><td>Manual Integration</td><td>Native/Automatic</td><td>Manual Integration</td>
-  </tr>
-</table>
-
 <div class="section">
-  <h3>Operational Considerations</h3>
-  <ul>
-    <li><strong>Congregation Migration:</strong> Options 2 and 3 require users to transition their recurring giving profiles.</li>
-    <li><strong>SMS & Email:</strong> Subsplash and PCO both support SMS/email workflows, though execution methods and integrations with existing ChMS data differ.</li>
-    <li><strong>Check-in:</strong> PCO offers a mature, widely-integrated check-in system. Subsplash offers a newer check-in module with limited third-party review data available.</li>
-  </ul>
+  <h3>Estimated Annual Platform Costs</h3>
+  <table>
+    <tr>
+      <th>Option</th>
+      <th>Annual Software Cost</th>
+      <th>Setup/Onboarding Fees</th>
+    </tr>
+    <tr>
+      <td>Pushpay + Planning Center</td>
+      <td>$4,788</td>
+      <td>$0</td>
+    </tr>
+    <tr>
+      <td>Unified Planning Center</td>
+      <td>~$1,400 - $1,500</td>
+      <td>$0</td>
+    </tr>
+    <tr>
+      <td>Subsplash</td>
+      <td>~$5,500 - $6,500</td>
+      <td>$999+ (Initial Setup)</td>
+    </tr>
+  </table>
+  <p style="font-size: 0.85rem; color: var(--text-muted);"><em>Note: Costs are estimates based on a congregation size of 250 and may vary based on specific feature tiers selected.</em></p>
 </div>
 
 <div class="section">
-  <h3>Onboarding Tier Comparison (Subsplash)</h3>
+  <h3>Strategic Considerations</h3>
   <ul>
-    <li><strong>Standard ($999):</strong> Provides setup coaching and access to training materials; requires internal team to manage all content assembly and layout.</li>
-    <li><strong>Streamlined/Comprehensive:</strong> Higher investment tiers that include expanded assistance for data migration and structural configuration.</li>
+    <li><strong>Church Management Software (CMS):</strong> Planning Center offers a highly integrated database that connects giving, check-in, and scheduling. Subsplash acts as an engagement layer but typically requires manual integration to sync data back to the primary database.</li>
+    <li><strong>Congregation Experience:</strong> Unified Planning Center uses the "Church Center" app for all functions. Subsplash provides a custom-branded app under the church's name.</li>
+    <li><strong>Onboarding Realities:</strong> Options involving a switch in payment processors require a transition period where donors must update their recurring giving profiles.</li>
   </ul>
 </div>
 
 <div class="section">
   <h3>Technical Discovery Questions</h3>
   <ul>
-    <li><strong>Ownership:</strong> Does the church retain full ownership of the app store presence and developer account?</li>
-    <li><strong>SMS/Email:</strong> What are the specific costs and delivery limits for mass communication?</li>
-    <li><strong>Check-in:</strong> Does the check-in module require a physical signature printout for security?</li>
-    <li><strong>Security:</strong> What are the protocols regarding data breach notification and recovery?</li>
-    <li><strong>Trial/Demo:</strong> Is there a sandboxed trial version available for technical review?</li>
-    <li><strong>Session Recording:</strong> Does the platform allow for local session recording/archiving?</li>
+    <li><strong>App Store Ownership:</strong> Does the church retain full ownership of the app store presence and developer account?</li>
+    <li><strong>Communication (SMS/Email):</strong> What are the specific costs and delivery limits for mass communication tools?</li>
+    <li><strong>Check-in Security:</strong> Does the check-in module require physical signature printouts for security?</li>
+    <li><strong>Data Security:</strong> What are the specific protocols regarding data breach notification and recovery?</li>
+    <li><strong>Demonstration:</strong> Is there a sandboxed trial version available for technical review?</li>
+    <li><strong>Media/Streaming:</strong> Does the platform allow for local session recording and archiving?</li>
     <li><strong>Support:</strong> Is a dedicated contact number provided for technical emergencies?</li>
   </ul>
 </div>
