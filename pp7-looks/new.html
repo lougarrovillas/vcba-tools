@@ -43,16 +43,14 @@
   .th-live { background: #2196F3; width: 180px; }
   .th-notes { background: #1a1a1a; }
 
-  /* Full Width Block Layouts matching image layouts */
+  /* Full Width Block Layouts matching interface coloring */
   .cell-fill { display: block; width: 100%; font-size: 0.72rem; font-weight: 700; padding: 0.35rem 0.25rem; border-radius: 4px; color: white; text-align: center; }
   
   .badge-worship { background: #2196F3; }
-  .badge-segment { background: #f39c12; }
-  .badge-fsverse { background: #e74c3c; }
-  .badge-ltverse { background: #16a085; }
-  .badge-points { background: #27ae60; }
-  .badge-mainpoint { background: #c0392b; }
-  .badge-clear { background: #1a1a1a; }
+  .badge-segment { background: #27ae60; }
+  .badge-sermon { background: #7f8c8d; }
+  .badge-clear-verse { background: #c0392b; }
+  .badge-clear-screen { background: #bdc3c7; color: #1a1a1a !important; }
 
   .theme-tag { display: block; width: 100%; background: #e8e8e8; color: #333; font-size: 0.72rem; font-weight: 600; padding: 0.35rem 0.25rem; border-radius: 4px; text-align: center; }
   .theme-none { display: block; width: 100%; color: #bbb; font-style: italic; font-size: 0.72rem; padding: 0.35rem 0.25rem; text-align: center; }
@@ -109,13 +107,7 @@
     </table>
 
     <div class="warning-box">
-      <strong>🍞 First Sunday Communion Protocol:</strong> On the first Sunday of the month, do not switch playlists or alter the master template structure. 
-      <ol style="margin-left: 1.25rem; margin-top: 0.25rem;">
-        <li>Select the <strong>VCBAMEDIA</strong> folder under the Library panel.</li>
-        <li>Locate the <strong>Communion</strong> presentation asset.</li>
-        <li>Drag and drop it directly into the active <code>REGULAR_SUNDAY_TEMPLATE</code> playlist under the <strong>WORSHIP</strong> or <strong>ANNOUNCEMENT & T&O</strong> header.</li>
-        <li><em>Post-Service:</em> Right-click the Communion item and remove it from the playlist to keep the template clean for the following week.</li>
-      </ol>
+      <strong>🍞 First Sunday Communion Protocol:</strong> On the first Sunday of the month, the Communion presentation asset (located in the <code>VCBAMEDIA</code> Library folder) is temporarily appended directly to the active <code>REGULAR_SUNDAY_TEMPLATE</code> playlist under the WORSHIP or ANNOUNCEMENT &amp; T&amp;O headers. Master playlist structure and template routing remain unchanged.
     </div>
 
     <div class="section-label">2. Calendar & Timeline Automation</div>
@@ -194,50 +186,43 @@
           <td><strong>Segment Verses for Call to Worship, Tithes and offerings &amp; Benediction</strong><br>Operator must select background in the Verse Background in the media bin.</td>
         </tr>
         <tr>
-          <td>Verse FS</td>
-          <td><span class="cell-fill badge-fsverse">Sermon FS Verse</span></td>
-          <td><span class="theme-tag">Main Verse</span></td>
-          <td><span class="theme-tag">Main Verse</span></td>
-          <td><strong>Main Scripture</strong><br>Currently not used.</td>
-        </tr>
-        <tr>
           <td>Verse LT</td>
-          <td><span class="cell-fill badge-ltverse">Sermon LT Verse</span></td>
+          <td><span class="cell-fill badge-sermon">Sermon LT Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
           <td><span class="theme-tag">Lower Third Verse</span></td>
-          <td><strong>Subsequent Verses in Sermon Notes</strong><br>Operator must make sure the background aligns with the current sermon series.</td>
+          <td><strong>Subsequent Verses in Sermon Notes</strong><br>Operator must make sure the background aligns with the current sermon series playlist.</td>
         </tr>
         <tr>
           <td>Bullets</td>
-          <td><span class="cell-fill badge-points">Sermon FS Series</span></td>
+          <td><span class="cell-fill badge-sermon">Sermon FS Series</span></td>
           <td><span class="theme-tag">Point</span></td>
           <td><span class="theme-tag">Point</span></td>
-          <td><strong>Bulleted Points in the Sermon Notes</strong><br>Operator must make sure the background aligns with the current sermon series.</td>
+          <td><strong>Bulleted Points in the Sermon Notes</strong><br>Operator must make sure the background aligns with the current sermon series playlist.</td>
         </tr>
         <tr>
           <td>Point LT</td>
-          <td><span class="cell-fill badge-ltverse">Sermon LT Oneliner</span></td>
+          <td><span class="cell-fill badge-sermon">Sermon LT Oneliner</span></td>
           <td><span class="theme-tag">One Liner</span></td>
           <td><span class="theme-tag">Lower Third Point</span></td>
-          <td><strong>Main Scripture &amp; One-Liners in the Sermon Notes</strong><br>Operator must make sure the background aligns with the current sermon series.</td>
+          <td><strong>Main Scripture &amp; One-Liners in the Sermon Notes</strong><br>Operator must make sure the background aligns with the current sermon series playlist.</td>
         </tr>
         <tr>
           <td>Main Point</td>
-          <td><span class="cell-fill badge-mainpoint">Sermon Main Point</span></td>
+          <td><span class="cell-fill badge-sermon">Sermon Main Point</span></td>
           <td><span class="theme-tag">Main Point</span></td>
           <td><span class="theme-tag">Main Point</span></td>
-          <td><strong>Main Point in the Sermon Notes</strong><br>Operator must make sure the background aligns with the current sermon series.</td>
+          <td><strong>Main Point in the Sermon Notes</strong><br>Operator must make sure the background aligns with the current sermon series playlist.</td>
         </tr>
         <tr>
           <td>Clear Verse</td>
-          <td><span class="cell-fill badge-clear">Clear Verse</span></td>
+          <td><span class="cell-fill badge-clear-verse">Clear Verse</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td><span class="theme-none">Blocked</span></td>
-          <td><strong>Text Wipe</strong><br>Clears out the verses in both livestream and in Person Service.</td>
+          <td><strong>Panic Button</strong><br>Clears out the verses in both livestream and in Person Service.</td>
         </tr>
         <tr>
           <td>Clear Screen</td>
-          <td><span class="cell-fill badge-clear">Clear</span></td>
+          <td><span class="cell-fill badge-clear-screen">Clear</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td><strong>Panic Button</strong><br>Clears screen in livestream but retains in Person Service.</td>
@@ -250,7 +235,8 @@
       <p>To maintain clear visual separation and reduce the chance of an operator selecting the wrong asset mid-service, the Media Bin utilizes dedicated background playlists.</p>
       <ul style="margin-left: 1.25rem; margin-top: 0.4rem; font-size: 0.75rem;">
         <li><strong>🖼️ Worship Background:</strong> Reserved strictly for abstract motion loops, ambient pads, and song lyrics presentation layers.</li>
-        <li><strong>📖 Verse Background:</strong> Reserved specifically for sermon aesthetic packages, scripture reading backdrops, and sermon series graphic templates.</li>
+        <li><strong>📖 Verse Background:</strong> Reserved specifically for the segment sections (Call to Worship, Tithes and Offerings, and Benediction).</li>
+        <li><strong>📁 Series Playlists:</strong> Each specific sermon graphic package has a separate media playlist dedicated to that individual series (e.g., Jesus > Series).</li>
       </ul>
     </div>
 
