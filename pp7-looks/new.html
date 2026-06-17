@@ -43,7 +43,7 @@
   .th-live { background: #2196F3; width: 180px; }
   .th-notes { background: #1a1a1a; }
 
-  /* Full Width Block Layouts matching image_45be07.png design */
+  /* Full Width Block Layouts matching image_454e20.png design */
   .cell-fill { display: block; width: 100%; font-size: 0.72rem; font-weight: 700; padding: 0.35rem 0.25rem; border-radius: 4px; color: white; text-align: center; }
   
   .badge-worship { background: #2196F3; }
@@ -96,16 +96,6 @@
           <th>Standard Deployment Workflow & Use Case</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><strong>REGULAR_SUNDAY_TEMPLATE</strong></td>
-          <td>The primary structural backbone for standard Sunday morning services. This layout tracks a linear progression directly from initial automated pre-service graphics loops straight through worship, announcements, sermon, and exit media.</td>
-        </tr>
-        <tr>
-          <td><strong>EVENT_TEMPLATE</strong></td>
-          <td>The dedicated template package configured specifically for afternoon events, special ministries, and standalone gatherings that require distinct tracking outside of the standard morning assembly line.</td>
-        </tr>
-      </tbody>
     </table>
 
     <div class="warning-box">
@@ -184,63 +174,63 @@
           <td><span class="cell-fill badge-worship">Worship</span></td>
           <td><span class="theme-tag">Lyrics</span></td>
           <td><span class="theme-tag">Lower Third Lyrics</span></td>
-          <td>Full screen house lyrics; lower third overlays for the stream feed.</td>
+          <td><strong>Praise & Worship Only:</strong> Full screen house lyrics; lower third overlays for the stream. Operator must select from the <code>Worship Background</code> folder (limit choices to 1 or 2 matching styles maximum to maintain uniformity).</td>
         </tr>
         <tr>
           <td>Segment</td>
           <td><span class="cell-fill badge-segment">Segment</span></td>
           <td><span class="theme-tag">Segment Intro</span></td>
           <td><span class="theme-tag">Lower Third Segment</span></td>
-          <td>Handles global environments for MCs, intros, and live transitions.</td>
+          <td><strong>Host & Transition Environments:</strong> Mapped strictly for Call to Worship, T&O, and Benediction scripture verses. Operator must pair this with an active background loop from the <code>Verse Background</code> library.</td>
         </tr>
         <tr>
           <td>Verse FS</td>
           <td><span class="cell-fill badge-fsverse">Sermon FS Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
-          <td><strong>Full-Text Layout:</strong> Used only when complete paragraphs of scripture must be read directly off the screen on both feeds.</td>
+          <td><strong>Full-Screen Scripture Blocks:</strong> Used only when complete paragraphs/blocks of text must be read directly off the screen simultaneously on both the house and livestream feeds.</td>
         </tr>
         <tr>
           <td>Verse LT</td>
           <td><span class="cell-fill badge-ltverse">Sermon LT Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
           <td><span class="theme-tag">Lower Third Verse</span></td>
-          <td><strong>Paragraph Overlays:</strong> Full text in the house, but compressed to lower-third text blocks on stream over live camera video.</td>
+          <td><strong>Subsequent Verses in Sermon Notes:</strong> Displays full-screen long text layouts across the in-person house projectors, but keeps the livestream feed clean with lower-third text boxes.</td>
         </tr>
         <tr>
           <td>Bullets</td>
           <td><span class="cell-fill badge-points">Sermon FS Series</span></td>
           <td><span class="theme-tag">Point</span></td>
           <td><span class="theme-tag">Point</span></td>
-          <td>Mapped to Point FS. Handles full-screen list styles and text points.</td>
+          <td><strong>Sermon Lists:</strong> Displays bulleted outlines, nested list points, or sequential text steps full screen on both house and livestream feeds uniformly.</td>
         </tr>
         <tr>
           <td>Point LT</td>
           <td><span class="cell-fill badge-ltverse">Sermon LT Oneliner</span></td>
           <td><span class="theme-tag">One Liner</span></td>
           <td><span class="theme-tag">Lower Third Point</span></td>
-          <td><strong>Scripture Markers & Callouts:</strong> Use this when the Pastor shows basic references (e.g., <em>ACTS 4:1-8</em>) for the audience to follow along in their own Bibles. Displays full screen in-house, lower-third on stream.</td>
+          <td><strong>One-Liners & Main Scripture References:</strong> Use this for basic scripture indicators (e.g., *ACTS 4:1-8*) or distinct, single-line sermon points given by the preacher. Displays full screen in-house, compressed lower-third overlays on stream.</td>
         </tr>
         <tr>
           <td>Main Point</td>
           <td><span class="cell-fill badge-mainpoint">Sermon Main Point</span></td>
           <td><span class="theme-tag">Main Point</span></td>
           <td><span class="theme-tag">Main Point</span></td>
-          <td>Structural title slides, key message emphasis, or core takeaways.</td>
+          <td><strong>Sermon Core Takeaways:</strong> Displays primary title cards, key foundational takeaways, or the primary message summary full screen on both outputs.</td>
         </tr>
         <tr>
           <td>Clear: Verse</td>
           <td><span class="cell-fill badge-clear">Clear Verse</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td><span class="theme-none">Blocked</span></td>
-          <td>Instantly clears lyric/scripture text layers while holding background video.</td>
+          <td><strong>Text & Stream Media Clear:</strong> Instantly clears out slide text on both the livestream and in-person screens. Crucially, it removes the background media on the livestream feed while safely preserving the active background loop on the in-person house screen.</td>
         </tr>
         <tr>
           <td>Clear Screen</td>
           <td><span class="cell-fill badge-clear">Clear</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td><span class="theme-none">Blocked</span></td>
-          <td>Total video and text blackout to establish a clean video baseline.</td>
+          <td><strong>The Ultimate Panic Button:</strong> Completely clears out and blackouts everything on the livestream feed <em>except</em> for the live camera video input layer. Keeps everything completely up and untouched on the main in-person house screens.</td>
         </tr>
       </tbody>
     </table>
@@ -256,11 +246,11 @@
 
     <div class="section-label">5. Quick Troubleshooting & Safety Net</div>
     <div class="panic-box">
-      <strong>🚨 The Live Production Safety Switch: "When in doubt, clear it out!"</strong>
-      <p style="margin-top: 0.4rem;">If something breaks layout rules, slides overlap, or incorrect layers freeze on the broadcast feed, do not try to fix it mid-operation while panicked. Follow this 2-step baseline reset:</p>
+      <strong>🚨 The Live Production Safety Switch: Panic Button Reference</strong>
+      <p style="margin-top: 0.4rem;">If text overlaps, incorrect templates are displayed, or the wrong media assets are visual mid-service, do not panic. Use these targeted layers to instantly clean up the output:</p>
       <ol style="margin-left: 1.25rem; margin-top: 0.4rem;">
-        <li><strong>Press the "Clear Screen" Macro:</strong> This immediately forces a total screen and text blackout to both the house and livestream feeds, instantly buying you time and removing the visual error.</li>
-        <li><strong>Re-trigger the Segment:</strong> Once the screen is clear, take a breath, click the correct Macro button for the current active segment (e.g., <code>Worship</code> or <code>Segment</code>), and re-click the current slide to restore the environment cleanly.</li>
+        <li><strong>If the stream or house slide text is frozen/messed up:</strong> Press the <code>Clear: Verse</code> macro. This instantly strips the slide content text off both feeds and safely clears out any stream-side media errors while maintaining the room's background loop.</li>
+        <li><strong>If you need an absolute stream reset (The Panic Switch):</strong> Press the <code>Clear Screen</code> macro. This wipes everything on the livestream output completely clean down to the raw camera video feed layer alone, ensuring no text or frozen graphic artifacts are broadcasting while keeping the main house display completely unbothered.</li>
       </ol>
     </div>
 
