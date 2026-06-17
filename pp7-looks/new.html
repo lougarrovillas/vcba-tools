@@ -43,7 +43,7 @@
   .th-live { background: #2196F3; width: 180px; }
   .th-notes { background: #1a1a1a; }
 
-  /* Full Width Block Layouts matching image_454e20.png design */
+  /* Full Width Block Layouts matching image layouts */
   .cell-fill { display: block; width: 100%; font-size: 0.72rem; font-weight: 700; padding: 0.35rem 0.25rem; border-radius: 4px; color: white; text-align: center; }
   
   .badge-worship { background: #2196F3; }
@@ -158,7 +158,6 @@
     <div class="warning-box" style="background: #fdf2e9; border-left-color: #d35400;">
       <strong>⚠️ Critical Automation Notes for Operators:</strong>
       <ul style="margin-left: 1.25rem; margin-top: 0.25rem;">
-        <li>Preference indicates long-term household planning should factor in focused, reliable blocks for technical stack expansion and study after 11:00 PM.</li>
         <li><strong>Calendar Status:</strong> The <code>Calendar Enabled</code> checkbox in the top-left of the Calendar settings must always remain checked. Disabling this turns off all automated service transitions.</li>
         <li><strong>Testing New Events:</strong> When creating separate event items, always ensure the <strong>repeat rule</strong> and <strong>ends on</strong> dates match the exact schedule of that specific event so it does not loop or conflict with the standard Sunday morning master timeline.</li>
       </ul>
@@ -185,63 +184,63 @@
           <td><span class="cell-fill badge-worship">Worship</span></td>
           <td><span class="theme-tag">Lyrics</span></td>
           <td><span class="theme-tag">Lower Third Lyrics</span></td>
-          <td><strong>SECTION: Praise &amp; Worship</strong><br>Used for praise and worship slides. Operator must select from the <code>Worship Background</code> folder in the Media Bin (limit choices to 1 or 2 matching motion loop styles maximum to maintain uniformity).</td>
+          <td><strong>Praise &amp; Worship Songs</strong><br>Operator needs to select a maximum of 1 or 2 Worship Backgrounds in the Media Bin.</td>
         </tr>
         <tr>
           <td>Segment</td>
           <td><span class="cell-fill badge-segment">Segment</span></td>
           <td><span class="theme-tag">Segment Intro</span></td>
           <td><span class="theme-tag">Lower Third Segment</span></td>
-          <td><strong>SECTION: Call to Worship, T&amp;O, Benediction</strong><br>Used for introductory transitions, host updates, and benediction scripture lines. Operator must manually attach an active loop background asset from the <code>Verse Background</code> bin folder.</td>
+          <td><strong>Segment Verses for Call to Worship, Tithes and offerings &amp; Benediction</strong><br>Operator must select background in the Verse Background in the media bin.</td>
         </tr>
         <tr>
           <td>Verse FS</td>
           <td><span class="cell-fill badge-fsverse">Sermon FS Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
-          <td><strong>SECTION: Main Scripture (Full Screen Emphasis)</strong><br>Used exclusively when large text lines or full scripture paragraphs need to be matched symmetrically across both physical house displays and the stream video.</td>
+          <td><strong>Main Scripture</strong><br>Currently not used.</td>
         </tr>
         <tr>
           <td>Verse LT</td>
           <td><span class="cell-fill badge-ltverse">Sermon LT Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
           <td><span class="theme-tag">Lower Third Verse</span></td>
-          <td><strong>SECTION: Sermon Notes (Subsequent Verses)</strong><br>Used to display extended body text lines for follow-up message scriptures following the main point card.</td>
+          <td><strong>Subsequent Verses in Sermon Notes</strong><br>Operator must make sure the background aligns with the current sermon series.</td>
         </tr>
         <tr>
           <td>Bullets</td>
           <td><span class="cell-fill badge-points">Sermon FS Series</span></td>
           <td><span class="theme-tag">Point</span></td>
           <td><span class="theme-tag">Point</span></td>
-          <td><strong>SECTION: Sermon Notes (Bullet Outlines)</strong><br>Used to map structured lists, sub-points, sequentially nested steps, or multi-line outline blocks clearly across all screens.</td>
+          <td><strong>Bulleted Points in the Sermon Notes</strong><br>Operator must make sure the background aligns with the current sermon series.</td>
         </tr>
         <tr>
           <td>Point LT</td>
           <td><span class="cell-fill badge-ltverse">Sermon LT Oneliner</span></td>
-          <td><span class="theme-tag">One Liner / Core Takeaway</span></td>
+          <td><span class="theme-tag">One Liner</span></td>
           <td><span class="theme-tag">Lower Third Point</span></td>
-          <td><strong>SECTION: Sermon Notes (One-Liners &amp; Chapter Markers)</strong><br>Used for quick book/chapter indicators (e.g., *ACTS 4:1-8*) or concise single-sentence commentary statements dropped live by the speaker. Reference image: image_44f008.jpg.</td>
+          <td><strong>Main Scripture &amp; One-Liners in the Sermon Notes</strong><br>Operator must make sure the background aligns with the current sermon series.</td>
         </tr>
         <tr>
           <td>Main Point</td>
           <td><span class="cell-fill badge-mainpoint">Sermon Main Point</span></td>
           <td><span class="theme-tag">Main Point</span></td>
           <td><span class="theme-tag">Main Point</span></td>
-          <td><strong>SECTION: Sermon Notes (Core Heading)</strong><br>Used for the primary message thesis statement title cards, critical focal anchors, or master summary point frames.</td>
+          <td><strong>Main Point in the Sermon Notes</strong><br>Operator must make sure the background aligns with the current sermon series.</td>
         </tr>
         <tr>
-          <td>Clear: Verse</td>
+          <td>Clear Verse</td>
           <td><span class="cell-fill badge-clear">Clear Verse</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td><span class="theme-none">Blocked</span></td>
-          <td><strong>SECTION: Text Wipes / Mid-Service Resets</strong><br>Used to instantly drop out paragraph lines or song text from all outputs. Strips active background elements from the livestream layout while keeping the room's main background running.</td>
+          <td><strong>Text Wipe</strong><br>Clears out the verses in both livestream and in Person Service.</td>
         </tr>
         <tr>
           <td>Clear Screen</td>
           <td><span class="cell-fill badge-clear">Clear</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td><span class="theme-none">Blocked</span></td>
-          <td><strong>SECTION: Live Video Bypass (The Panic Button)</strong><br>Used to clean up unexpected visual errors on the stream feed instantly. Blackouts all overlay text layers and graphics on the broadcast output down to the live camera input feed, while leaving the main house displays undisturbed.</td>
+          <td><strong>Panic Button</strong><br>Clears screen in livestream but retains in Person Service.</td>
         </tr>
       </tbody>
     </table>
@@ -260,7 +259,7 @@
       <strong>🚨 The Live Production Safety Switch: Panic Button Reference</strong>
       <p style="margin-top: 0.4rem;">If text overlaps, incorrect templates are displayed, or the wrong media assets are visual mid-service, do not panic. Use these targeted layers to instantly clean up the output:</p>
       <ol style="margin-left: 1.25rem; margin-top: 0.4rem;">
-        <li><strong>If the stream or house slide text is frozen/messed up:</strong> Press the <code>Clear: Verse</code> macro. This instantly strips the slide content text off both feeds and safely clears out any stream-side media errors while maintaining the room's background loop.</li>
+        <li><strong>If the stream or house slide text is frozen/messed up:</strong> Press the <code>Clear Verse</code> macro. This instantly strips the slide content text off both feeds and safely clears out any stream-side media errors while maintaining the room's background loop.</li>
         <li><strong>If you need an absolute stream reset (The Panic Switch):</strong> Press the <code>Clear Screen</code> macro. This wipes everything on the livestream output completely clean down to the raw camera video feed layer alone, ensuring no text or frozen graphic artifacts are broadcasting while keeping the main house display completely unbothered.</li>
       </ol>
     </div>
