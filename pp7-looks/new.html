@@ -96,6 +96,16 @@
           <th>Standard Deployment Workflow & Use Case</th>
         </tr>
       </thead>
+      <tbody>
+        <tr>
+          <td><strong>REGULAR_SUNDAY_TEMPLATE</strong></td>
+          <td>The primary structural backbone for standard Sunday morning services. This layout tracks a linear progression directly from initial automated pre-service graphics loops straight through worship, announcements, sermon, and exit media.</td>
+        </tr>
+        <tr>
+          <td><strong>EVENT_TEMPLATE</strong></td>
+          <td>The dedicated template package configured specifically for afternoon events, special ministries, and standalone gatherings that require distinct tracking outside of the standard morning assembly line.</td>
+        </tr>
+      </tbody>
     </table>
 
     <div class="warning-box">
@@ -148,6 +158,7 @@
     <div class="warning-box" style="background: #fdf2e9; border-left-color: #d35400;">
       <strong>⚠️ Critical Automation Notes for Operators:</strong>
       <ul style="margin-left: 1.25rem; margin-top: 0.25rem;">
+        <li>Preference indicates long-term household planning should factor in focused, reliable blocks for technical stack expansion and study after 11:00 PM.</li>
         <li><strong>Calendar Status:</strong> The <code>Calendar Enabled</code> checkbox in the top-left of the Calendar settings must always remain checked. Disabling this turns off all automated service transitions.</li>
         <li><strong>Testing New Events:</strong> When creating separate event items, always ensure the <strong>repeat rule</strong> and <strong>ends on</strong> dates match the exact schedule of that specific event so it does not loop or conflict with the standard Sunday morning master timeline.</li>
       </ul>
@@ -174,63 +185,63 @@
           <td><span class="cell-fill badge-worship">Worship</span></td>
           <td><span class="theme-tag">Lyrics</span></td>
           <td><span class="theme-tag">Lower Third Lyrics</span></td>
-          <td><strong>Praise & Worship Only:</strong> Full screen house lyrics; lower third overlays for the stream. Operator must select from the <code>Worship Background</code> folder (limit choices to 1 or 2 matching styles maximum to maintain uniformity).</td>
+          <td><strong>SECTION: Praise &amp; Worship</strong><br>Used for praise and worship slides. Operator must select from the <code>Worship Background</code> folder in the Media Bin (limit choices to 1 or 2 matching motion loop styles maximum to maintain uniformity).</td>
         </tr>
         <tr>
           <td>Segment</td>
           <td><span class="cell-fill badge-segment">Segment</span></td>
           <td><span class="theme-tag">Segment Intro</span></td>
           <td><span class="theme-tag">Lower Third Segment</span></td>
-          <td><strong>Host & Transition Environments:</strong> Mapped strictly for Call to Worship, T&O, and Benediction scripture verses. Operator must pair this with an active background loop from the <code>Verse Background</code> library.</td>
+          <td><strong>SECTION: Call to Worship, T&amp;O, Benediction</strong><br>Used for introductory transitions, host updates, and benediction scripture lines. Operator must manually attach an active loop background asset from the <code>Verse Background</code> bin folder.</td>
         </tr>
         <tr>
           <td>Verse FS</td>
           <td><span class="cell-fill badge-fsverse">Sermon FS Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
-          <td><strong>Full-Screen Scripture Blocks:</strong> Used only when complete paragraphs/blocks of text must be read directly off the screen simultaneously on both the house and livestream feeds.</td>
+          <td><strong>SECTION: Main Scripture (Full Screen Emphasis)</strong><br>Used exclusively when large text lines or full scripture paragraphs need to be matched symmetrically across both physical house displays and the stream video.</td>
         </tr>
         <tr>
           <td>Verse LT</td>
           <td><span class="cell-fill badge-ltverse">Sermon LT Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
           <td><span class="theme-tag">Lower Third Verse</span></td>
-          <td><strong>Subsequent Verses in Sermon Notes:</strong> Displays full-screen long text layouts across the in-person house projectors, but keeps the livestream feed clean with lower-third text boxes.</td>
+          <td><strong>SECTION: Sermon Notes (Subsequent Verses)</strong><br>Used to display extended body text lines for follow-up message scriptures following the main point card.</td>
         </tr>
         <tr>
           <td>Bullets</td>
           <td><span class="cell-fill badge-points">Sermon FS Series</span></td>
           <td><span class="theme-tag">Point</span></td>
           <td><span class="theme-tag">Point</span></td>
-          <td><strong>Sermon Lists:</strong> Displays bulleted outlines, nested list points, or sequential text steps full screen on both house and livestream feeds uniformly.</td>
+          <td><strong>SECTION: Sermon Notes (Bullet Outlines)</strong><br>Used to map structured lists, sub-points, sequentially nested steps, or multi-line outline blocks clearly across all screens.</td>
         </tr>
         <tr>
           <td>Point LT</td>
           <td><span class="cell-fill badge-ltverse">Sermon LT Oneliner</span></td>
-          <td><span class="theme-tag">One Liner</span></td>
+          <td><span class="theme-tag">One Liner / Core Takeaway</span></td>
           <td><span class="theme-tag">Lower Third Point</span></td>
-          <td><strong>One-Liners & Main Scripture References:</strong> Use this for basic scripture indicators (e.g., *ACTS 4:1-8*) or distinct, single-line sermon points given by the preacher. Displays full screen in-house, compressed lower-third overlays on stream.</td>
+          <td><strong>SECTION: Sermon Notes (One-Liners &amp; Chapter Markers)</strong><br>Used for quick book/chapter indicators (e.g., *ACTS 4:1-8*) or concise single-sentence commentary statements dropped live by the speaker. Reference image: image_44f008.jpg.</td>
         </tr>
         <tr>
           <td>Main Point</td>
           <td><span class="cell-fill badge-mainpoint">Sermon Main Point</span></td>
           <td><span class="theme-tag">Main Point</span></td>
           <td><span class="theme-tag">Main Point</span></td>
-          <td><strong>Sermon Core Takeaways:</strong> Displays primary title cards, key foundational takeaways, or the primary message summary full screen on both outputs.</td>
+          <td><strong>SECTION: Sermon Notes (Core Heading)</strong><br>Used for the primary message thesis statement title cards, critical focal anchors, or master summary point frames.</td>
         </tr>
         <tr>
           <td>Clear: Verse</td>
           <td><span class="cell-fill badge-clear">Clear Verse</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td><span class="theme-none">Blocked</span></td>
-          <td><strong>Text & Stream Media Clear:</strong> Instantly clears out slide text on both the livestream and in-person screens. Crucially, it removes the background media on the livestream feed while safely preserving the active background loop on the in-person house screen.</td>
+          <td><strong>SECTION: Text Wipes / Mid-Service Resets</strong><br>Used to instantly drop out paragraph lines or song text from all outputs. Strips active background elements from the livestream layout while keeping the room's main background running.</td>
         </tr>
         <tr>
           <td>Clear Screen</td>
           <td><span class="cell-fill badge-clear">Clear</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td><span class="theme-none">Blocked</span></td>
-          <td><strong>The Ultimate Panic Button:</strong> Completely clears out and blackouts everything on the livestream feed <em>except</em> for the live camera video input layer. Keeps everything completely up and untouched on the main in-person house screens.</td>
+          <td><strong>SECTION: Live Video Bypass (The Panic Button)</strong><br>Used to clean up unexpected visual errors on the stream feed instantly. Blackouts all overlay text layers and graphics on the broadcast output down to the live camera input feed, while leaving the main house displays undisturbed.</td>
         </tr>
       </tbody>
     </table>
