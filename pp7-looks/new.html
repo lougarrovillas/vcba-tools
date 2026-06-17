@@ -7,7 +7,7 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f0f0; color: #1a1a1a; padding: 1rem; }
-  .page { max-width: 1150px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
+  .page { max-width: 1250px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
 
   .header { background: #ffffff; border-bottom: 2px solid #e0e0e0; padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
   .header-right h1 { color: #1a3f8f; font-size: 1.2rem; font-weight: 700; }
@@ -26,36 +26,45 @@
   .cheat-table tr:last-child td { border-bottom: none; }
   .cheat-table tr:nth-child(even) td { background: #fafafa; }
 
-  .ref-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; margin-bottom: 1rem; }
-  .ref-table th { padding: 0.5rem 0.6rem; font-size: 0.68rem; letter-spacing: 0.06em; font-weight: 700; color: white; text-align: center; }
-  .ref-table th:first-child { text-align: left; }
-  .ref-table td { padding: 0.5rem 0.6rem; border-bottom: 1px solid #eee; vertical-align: middle; text-align: center; }
-  .ref-table td:first-child { text-align: left; font-weight: 600; }
+  /* Expanded Table Custom Layout styling for Macros Reference */
+  .ref-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-bottom: 1rem; table-layout: fixed; }
+  .ref-table th { padding: 0.65rem 0.5rem; font-size: 0.72rem; letter-spacing: 0.06em; font-weight: 700; color: white; text-align: center; }
+  .ref-table th:first-child { text-align: left; padding-left: 0.75rem; }
+  .ref-table th:last-child { text-align: left; padding-left: 0.75rem; }
+  .ref-table td { padding: 0.65rem 0.5rem; border-bottom: 1px solid #eee; vertical-align: middle; text-align: center; }
+  .ref-table td:first-child { text-align: left; font-size: 0.9rem; font-weight: 700; padding-left: 0.75rem; color: #1a1a1a; }
+  .ref-table td:last-child { text-align: left; font-size: 0.75rem; padding-left: 0.75rem; color: #333; line-height: 1.4; }
   .ref-table tr:last-child td { border-bottom: none; }
   
-  .th-look { background: #1a1a1a; width: 170px; }
-  .th-stage { background: #27ae60; }
-  .th-live { background: #2196F3; }
+  .th-macro { background: #1a1a1a; width: 140px; }
+  .th-look { background: #2c2c2c; width: 180px; }
+  .th-stage { background: #27ae60; width: 180px; }
+  .th-live { background: #2196F3; width: 180px; }
+  .th-notes { background: #1a1a1a; }
 
-  .badge-worship { display: inline-block; background: #2196F3; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
-  .badge-segment { display: inline-block; background: #f39c12; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
-  .badge-fsverse { display: inline-block; background: #e74c3c; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
-  .badge-ltverse { display: inline-block; background: #16a085; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
-  .badge-points { display: inline-block; background: #27ae60; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
-  .badge-mainpoint { display: inline-block; background: #c0392b; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
-  .badge-clear { display: inline-block; background: #1a1a1a; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
+  /* Full Width Block Layouts matching image_45be07.png design */
+  .cell-fill { display: block; width: 100%; font-size: 0.72rem; font-weight: 700; padding: 0.35rem 0.25rem; border-radius: 4px; color: white; text-align: center; }
+  
+  .badge-worship { background: #2196F3; }
+  .badge-segment { background: #f39c12; }
+  .badge-fsverse { background: #e74c3c; }
+  .badge-ltverse { background: #16a085; }
+  .badge-points { background: #27ae60; }
+  .badge-mainpoint { background: #c0392b; }
+  .badge-clear { background: #1a1a1a; }
 
-  .theme-tag { display: inline-block; background: #e8e8e8; color: #333; font-size: 0.63rem; font-weight: 600; padding: 0.12rem 0.4rem; border-radius: 3px; font-family: monospace; }
-  .theme-none { color: #bbb; font-style: italic; font-size: 0.65rem; }
+  .theme-tag { display: block; width: 100%; background: #e8e8e8; color: #333; font-size: 0.72rem; font-weight: 600; padding: 0.35rem 0.25rem; border-radius: 4px; text-align: center; }
+  .theme-none { display: block; width: 100%; color: #bbb; font-style: italic; font-size: 0.72rem; padding: 0.35rem 0.25rem; text-align: center; }
 
   .footer { background: #f4f4f4; border-top: 1px solid #e0e0e0; padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
   .footer span { font-size: 0.68rem; color: #999; }
   .badge-footer { background: #1a1a1a; color: white; font-size: 0.62rem; padding: 0.2rem 0.6rem; border-radius: 3px; font-weight: 700; letter-spacing: 0.08em; }
 
-  @media (max-width: 680px) {
+  @media (max-width: 850px) {
     body { padding: 0.5rem; }
     .content { padding: 1rem; }
     .header { padding: 1rem; }
+    .ref-table { display: block; overflow-x: auto; }
   }
 </style>
 </head>
@@ -74,44 +83,32 @@
 
   <div class="content">
     
-    <div class="section-label">1. Master Sunday Playlist Timeline</div>
+    <div class="section-label">1. Active Sunday Service Templates</div>
     <div class="intro-box">
-      <p>We have consolidated our production workflow down to a single master template: <strong>REGULAR_SUNDAY_TEMPLATE</strong>. This replaces all previous variations (such as separate First Sunday configurations) to ensure an absolute linear flow.</p>
+      <p>This is a living framework representing the standard operating configurations for our production environments. Rather than recreating assets weekly, our media workflow cycles out of a core template package to ensure visual and structural consistency across all gatherings.</p>
     </div>
 
     <table class="cheat-table">
       <thead>
         <tr>
-          <th style="width: 250px;">Service Segment</th>
-          <th>Standard Operating Workflow / Action</th>
+          <th style="width: 250px;">Playlist Template Name</th>
+          <th>Standard Deployment Workflow & Use Case</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>PRE-SERVICE & COUNTDOWN</strong></td>
-          <td>Automated rolling loops and video countdowns kick off via the built-in Scheduler. No operator actions required.</td>
+          <td><strong>REGULAR_SUNDAY_TEMPLATE</strong></td>
+          <td>The primary structural backbone for standard Sunday morning services. This layout tracks a linear progression directly from initial automated pre-service graphics loops straight through worship, announcements, sermon, and exit media.</td>
         </tr>
         <tr>
-          <td><strong>WORSHIP</strong></td>
-          <td>The core song selection pulled straight from the standard <code>Song library</code>. Make sure text layers line up cleanly.</td>
-        </tr>
-        <tr>
-          <td><strong>ANNOUNCEMENT & T&O</strong></td>
-          <td>Tithing, offering segments, slides, and active church life media.</td>
-        </tr>
-        <tr>
-          <td><strong>SERMON</strong></td>
-          <td>The active series presentation package followed immediately by the Benediction.</td>
-        </tr>
-        <tr>
-          <td><strong>POST-SERVICE</strong></td>
-          <td>Automated exit media loops take over the screens seamlessly.</td>
+          <td><strong>EVENT_TEMPLATE</strong></td>
+          <td>The dedicated template package configured specifically for afternoon events, special ministries, and standalone gatherings that require distinct tracking outside of the standard morning assembly line.</td>
         </tr>
       </tbody>
     </table>
 
     <div class="warning-box">
-      <strong>🍞 First Sunday Communion Protocol:</strong> On the first Sunday of the month, do not switch playlists or alter the template structure. 
+      <strong>🍞 First Sunday Communion Protocol:</strong> On the first Sunday of the month, do not switch playlists or alter the master template structure. 
       <ol style="margin-left: 1.25rem; margin-top: 0.25rem;">
         <li>Select the <strong>VCBAMEDIA</strong> folder under the Library panel.</li>
         <li>Locate the <strong>Communion</strong> presentation asset.</li>
@@ -173,73 +170,73 @@
     <table class="ref-table">
       <thead>
         <tr>
-          <th class="th-look">Macro Button</th>
+          <th class="th-macro">Macro Button</th>
           <th class="th-look">Underlying Look Preset</th>
           <th class="th-stage">Stage Projector Theme</th>
           <th class="th-live">Livestream Theme</th>
-          <th class="th-look">Notes / Behavior</th>
+          <th class="th-notes">Notes / Behavior</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>Worship</td>
-          <td><span class="badge-worship">Worship</span></td>
+          <td><span class="cell-fill badge-worship">Worship</span></td>
           <td><span class="theme-tag">Lyrics</span></td>
           <td><span class="theme-tag">Lower Third Lyrics</span></td>
           <td>Full screen house lyrics; lower third overlays for the stream feed.</td>
         </tr>
         <tr>
           <td>Segment</td>
-          <td><span class="badge-segment">Segment</span></td>
+          <td><span class="cell-fill badge-segment">Segment</span></td>
           <td><span class="theme-tag">Segment Intro</span></td>
           <td><span class="theme-tag">Lower Third Segment</span></td>
           <td>Handles global environments for MCs, intros, and live transitions.</td>
         </tr>
         <tr>
           <td>Verse FS</td>
-          <td><span class="badge-fsverse">Sermon FS Verse</span></td>
+          <td><span class="cell-fill badge-fsverse">Sermon FS Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
           <td>Full-screen scripture layout sent uniformly to both outputs.</td>
         </tr>
         <tr>
           <td>Verse LT</td>
-          <td><span class="badge-ltverse">Sermon LT Verse</span></td>
+          <td><span class="cell-fill badge-ltverse">Sermon LT Verse</span></td>
           <td><span class="theme-tag">Main Verse</span></td>
           <td><span class="theme-tag">Lower Third Verse</span></td>
           <td>Scripture layout; lower third text block on stream over live video.</td>
         </tr>
         <tr>
           <td>Bullets</td>
-          <td><span class="badge-points">Sermon FS Series</span></td>
+          <td><span class="cell-fill badge-points">Sermon FS Series</span></td>
           <td><span class="theme-tag">Point</span></td>
           <td><span class="theme-tag">Point</span></td>
           <td>Mapped to Point FS. Handles full-screen list styles and text points.</td>
         </tr>
         <tr>
           <td>Point LT</td>
-          <td><span class="badge-ltverse">Sermon LT Oneliner</span></td>
+          <td><span class="cell-fill badge-ltverse">Sermon LT Oneliner</span></td>
           <td><span class="theme-tag">One Liner</span></td>
           <td><span class="theme-tag">Lower Third Point</span></td>
           <td>Single line or lower-third sermon callouts over live video feeds.</td>
         </tr>
         <tr>
           <td>Main Point</td>
-          <td><span class="badge-mainpoint">Sermon Main Point</span></td>
+          <td><span class="cell-fill badge-mainpoint">Sermon Main Point</span></td>
           <td><span class="theme-tag">Main Point</span></td>
           <td><span class="theme-tag">Main Point</span></td>
           <td>Structural title slides, key message emphasis, or core takeaways.</td>
         </tr>
         <tr>
           <td>Clear: Verse</td>
-          <td><span class="badge-clear">Clear Verse</span></td>
+          <td><span class="cell-fill badge-clear">Clear Verse</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td>Instantly clears lyric/scripture text layers while holding background video.</td>
         </tr>
         <tr>
           <td>Clear Screen</td>
-          <td><span class="badge-clear">Clear</span></td>
+          <td><span class="cell-fill badge-clear">Clear</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td><span class="theme-none">Blocked</span></td>
           <td>Total video and text blackout to establish a clean video baseline.</td>
@@ -249,7 +246,7 @@
 
     <div class="section-label">4. Media Bin Background Standards</div>
     <div class="intro-box">
-      <p>To maintain clear visual separation and reduce the chance of an operator selecting the wrong asset mid-service, the Media Bin utilizes dedicated background playlists:</p>
+      <p>To maintain clear visual separation and reduce the chance of an operator selecting the wrong asset mid-service, the Media Bin utilizes dedicated background playlists.</p>
       <ul style="margin-left: 1.25rem; margin-top: 0.4rem; font-size: 0.75rem;">
         <li><strong>🖼️ Worship Background:</strong> Reserved strictly for abstract motion loops, ambient pads, and song lyrics presentation layers.</li>
         <li><strong>📖 Verse Background:</strong> Reserved specifically for sermon aesthetic packages, scripture reading backdrops, and sermon series graphic templates.</li>
