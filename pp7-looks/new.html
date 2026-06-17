@@ -1,77 +1,268 @@
-<p align="center">
-  <img src="VCBA Logo Horizontal.png" alt="Victory Church of the Bay Area Logo" width="600">
-</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCBA PP7 Looks & Themes Guide</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f0f0; color: #1a1a1a; padding: 1rem; }
+  .page { max-width: 1150px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
 
-# ProPresenter 7 Standard Operating Guide
+  .header { background: #ffffff; border-bottom: 2px solid #e0e0e0; padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; }
+  .header-right h1 { color: #1a3f8f; font-size: 1.2rem; font-weight: 700; }
+  .header-right p { color: #555; font-size: 0.78rem; margin-top: 0.15rem; }
 
-This document outlines the standardized workflow, automation timelines, and Look configurations for the VCBA Media production environment.
+  .content { padding: 1.25rem 1.5rem; }
+  .section-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; color: #888; text-transform: uppercase; margin: 1.5rem 0 0.75rem; padding-bottom: 0.35rem; border-bottom: 2px solid #eee; }
+  .section-label:first-child { margin-top: 0; }
 
----
+  .intro-box { background: #f8f8f8; border-left: 3px solid #1a3f8f; border-radius: 0 8px 8px 0; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.78rem; line-height: 1.6; color: #333; }
+  .warning-box { background: #fff8e1; border-left: 3px solid #f39c12; border-radius: 0 8px 8px 0; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.78rem; line-height: 1.6; color: #333; }
 
-## 1. Master Sunday Playlist Timeline
+  .cheat-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-bottom: 1rem; }
+  .cheat-table th { background: #1a1a1a; color: white; padding: 0.5rem 0.7rem; text-align: left; font-size: 0.7rem; letter-spacing: 0.06em; font-weight: 700; }
+  .cheat-table td { padding: 0.5rem 0.7rem; border-bottom: 1px solid #eee; vertical-align: top; line-height: 1.4; }
+  .cheat-table tr:last-child td { border-bottom: none; }
+  .cheat-table tr:nth-child(even) td { background: #fafafa; }
 
-We have consolidated our workflow down to a single master template: **`REGULAR_SUNDAY_TEMPLATE`**. This replaces all previous variations (such as separate First Sunday templates) to ensure an absolute linear flow.
+  .ref-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; margin-bottom: 1rem; }
+  .ref-table th { padding: 0.5rem 0.6rem; font-size: 0.68rem; letter-spacing: 0.06em; font-weight: 700; color: white; text-align: center; }
+  .ref-table th:first-child { text-align: left; }
+  .ref-table td { padding: 0.5rem 0.6rem; border-bottom: 1px solid #eee; vertical-align: middle; text-align: center; }
+  .ref-table td:first-child { text-align: left; font-weight: 600; }
+  .ref-table tr:last-child td { border-bottom: none; }
+  
+  .th-look { background: #1a1a1a; width: 170px; }
+  .th-stage { background: #27ae60; }
+  .th-live { background: #2196F3; }
 
-### 📋 Linear Service Flow
-* **PRE-SERVICE & COUNTDOWN** — Automated rolling loops and video countdowns.
-* **WORSHIP** — The core song selection pulled straight from the standard `Song library`.
-* **ANNOUNCEMENT & T&O** — Tithing, offering segments, and active church life media.
-* **SERMON** — The active series presentation package followed by the Benediction.
-* **POST-SERVICE** — Automated exit loops.
+  .badge-worship { display: inline-block; background: #2196F3; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
+  .badge-segment { display: inline-block; background: #f39c12; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
+  .badge-fsverse { display: inline-block; background: #e74c3c; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
+  .badge-ltverse { display: inline-block; background: #16a085; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
+  .badge-points { display: inline-block; background: #27ae60; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
+  .badge-mainpoint { display: inline-block; background: #c0392b; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
+  .badge-clear { display: inline-block; background: #1a1a1a; color: white; font-size: 0.62rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 3px; white-space: nowrap; }
 
-### 🍞 First Sunday Communion Protocol
-On the first Sunday of the month, do not switch playlists or alter the master template structure:
-1. Select the **`VCBAMEDIA`** folder under the Library panel.
-2. Locate the **Communion** presentation asset.
-3. Drag and drop it directly into the active `REGULAR_SUNDAY_TEMPLATE` playlist under the **WORSHIP** or **ANNOUNCEMENT & T&O** header.
-4. *Post-Service:* Right-click the Communion item and remove it from the playlist to keep the template clean for the following week.
+  .theme-tag { display: inline-block; background: #e8e8e8; color: #333; font-size: 0.63rem; font-weight: 600; padding: 0.12rem 0.4rem; border-radius: 3px; font-family: monospace; }
+  .theme-none { color: #bbb; font-style: italic; font-size: 0.65rem; }
 
----
+  .footer { background: #f4f4f4; border-top: 1px solid #e0e0e0; padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+  .footer span { font-size: 0.68rem; color: #999; }
+  .badge-footer { background: #1a1a1a; color: white; font-size: 0.62rem; padding: 0.2rem 0.6rem; border-radius: 3px; font-weight: 700; letter-spacing: 0.08em; }
 
-## 2. Calendar & Timeline Automation
+  @media (max-width: 680px) {
+    body { padding: 0.5rem; }
+    .content { padding: 1rem; }
+    .header { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
 
-Pre-service transitions are completely automated using ProPresenter’s Calendar Scheduler. The operator does not need to manually trigger announcements, the stream, or the countdown.
+  <div class="header">
+    <div class="logo-area">
+      <img src="VCBA Logo Horizontal.png" alt="Victory Church of the Bay Area Logo" width="450">
+    </div>
+    <div class="header-right">
+      <h1>ProPresenter 7 Standard Operating Guide</h1>
+      <p>Standardized workflow, automation timelines, and Look configurations for VCBA Media.</p>
+    </div>
+  </div>
 
-### 📍 How to Open the Calendar Window
-Because the default keyboard shortcut (`Ctrl + Alt + C`) often conflicts with Windows system graphics hotkeys and may not trigger, always use the application menu:
-1. Go to the top menu bar and click **View**.
-2. Scroll down and click **Calendar**.
+  <div class="content">
+    
+    <div class="section-label">1. Master Sunday Playlist Timeline</div>
+    <div class="intro-box">
+      <p>We have consolidated our production workflow down to a single master template: <strong>REGULAR_SUNDAY_TEMPLATE</strong>. This replaces all previous variations (such as separate First Sunday configurations) to ensure an absolute linear flow.</p>
+    </div>
 
-### Master Sunday Timeline Reference
+    <table class="cheat-table">
+      <thead>
+        <tr>
+          <th style="width: 250px;">Service Segment</th>
+          <th>Standard Operating Workflow / Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PRE-SERVICE & COUNTDOWN</strong></td>
+          <td>Automated rolling loops and video countdowns kick off via the built-in Scheduler. No operator actions required.</td>
+        </tr>
+        <tr>
+          <td><strong>WORSHIP</strong></td>
+          <td>The core song selection pulled straight from the standard <code>Song library</code>. Make sure text layers line up cleanly.</td>
+        </tr>
+        <tr>
+          <td><strong>ANNOUNCEMENT & T&O</strong></td>
+          <td>Tithing, offering segments, slides, and active church life media.</td>
+        </tr>
+        <tr>
+          <td><strong>SERMON</strong></td>
+          <td>The active series presentation package followed immediately by the Benediction.</td>
+        </tr>
+        <tr>
+          <td><strong>POST-SERVICE</strong></td>
+          <td>Automated exit media loops take over the screens seamlessly.</td>
+        </tr>
+      </tbody>
+    </table>
 
-| Event Name | Scheduled Time | Triggered Action / Playlist Item | Purpose |
-| :--- | :--- | :--- | :--- |
-| **Pre-Service Loop** | 9:40:00 AM | `Announcement Loop` Presentation | Automatically fires rolling announcement graphics to house screens. |
-| **Start Livestream** | 9:50:00 AM | `Start Streaming` Action Command | *Automated Go-Live.* Instructs ProPresenter to output the active RTMP stream. |
-| **5 Min Countdown** | 9:55:00 AM | `5 Min Countdown` Video / Timer | Switches the presentation to the official 5-minute countdown video. |
+    <div class="warning-box">
+      <strong>🍞 First Sunday Communion Protocol:</strong> On the first Sunday of the month, do not switch playlists or alter the template structure. 
+      <ol style="margin-left: 1.25rem; margin-top: 0.25rem;">
+        <li>Select the <strong>VCBAMEDIA</strong> folder under the Library panel.</li>
+        <li>Locate the <strong>Communion</strong> presentation asset.</li>
+        <li>Drag and drop it directly into the active <code>REGULAR_SUNDAY_TEMPLATE</code> playlist under the <strong>WORSHIP</strong> or <strong>ANNOUNCEMENT & T&O</strong> header.</li>
+        <li><em>Post-Service:</em> Right-click the Communion item and remove it from the playlist to keep the template clean for the following week.</li>
+      </ol>
+    </div>
 
-> ⚠️ **Critical Automation Notes for Operators:**
-> * **Calendar Status:** The `Calendar Enabled` checkbox in the top-left of the Calendar settings must always remain checked. Disabling this turns off all automated service transitions.
-> * **Testing New Events:** When creating separate event items, always ensure the **repeat rule** and **ends on** dates match the exact schedule of that specific event so it does not loop or conflict with the standard Sunday morning master timeline.
+    <div class="section-label">2. Calendar & Timeline Automation</div>
+    <div class="intro-box">
+      <p>Pre-service transitions are completely automated using ProPresenter’s Calendar Scheduler. The operator does not need to manually trigger announcements, the stream, or the countdown loop.</p>
+      <p style="margin-top: 0.4rem;"><strong>📍 How to Open the Calendar Window:</strong> Because the default keyboard shortcut (<code>Ctrl + Alt + C</code>) often conflicts with Windows system graphics hotkeys and may fail to open, always use the application menu: <em>View -> Calendar</em>.</p>
+    </div>
 
----
+    <table class="cheat-table">
+      <thead>
+        <tr>
+          <th style="width: 150px;">Scheduled Time</th>
+          <th style="width: 200px;">Event Name</th>
+          <th style="width: 250px;">Triggered Action / Playlist Item</th>
+          <th>Purpose & Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>9:40:00 AM</td>
+          <td><strong>Pre-Service Loop</strong></td>
+          <td><code>Announcement Loop</code> Presentation</td>
+          <td>Automatically fires rolling announcement graphics out to the house screens.</td>
+        </tr>
+        <tr>
+          <td>9:50:00 AM</td>
+          <td><strong>Start Livestream</strong></td>
+          <td><code>Start Streaming</code> Action Command</td>
+          <td><em>Automated Go-Live.</em> Instructs ProPresenter to output the active RTMP stream to social platforms.</td>
+        </tr>
+        <tr>
+          <td>9:55:00 AM</td>
+          <td><strong>5 Min Countdown</strong></td>
+          <td><code>5 Min Countdown</code> Video / Timer</td>
+          <td>Switches the house presentation seamlessly to the official 5-minute countdown video.</td>
+        </tr>
+      </tbody>
+    </table>
 
-## 3. Macros & Looks Mapping Reference
+    <div class="warning-box" style="background: #fdf2e9; border-left-color: #d35400;">
+      <strong>⚠️ Critical Automation Notes for Operators:</strong>
+      <ul style="margin-left: 1.25rem; margin-top: 0.25rem;">
+        <li><strong>Calendar Status:</strong> The <code>Calendar Enabled</code> checkbox in the top-left of the Calendar settings must always remain checked. Disabling this turns off all automated service transitions.</li>
+        <li><strong>Testing New Events:</strong> When creating separate event items, always ensure the <strong>repeat rule</strong> and <strong>ends on</strong> dates match the exact schedule of that specific event so it does not loop or conflict with the standard Sunday morning master timeline.</li>
+      </ul>
+    </div>
 
-Each macro button on the controller interface is directly tied to an underlying Look preset configuration to cleanly manage routing overrides across the `Livestream` and `Stage Projector` outputs.
+    <div class="section-label">3. Macros & Looks Mapping Reference</div>
+    <div class="intro-box">
+      <p>Each macro button on the controller interface is directly tied to an underlying Look preset configuration to cleanly manage routing overrides across the <code>Livestream</code> and <code>Stage Projector</code> outputs.</p>
+    </div>
 
-| Macro Button | Underlying Look Preset | Stage Projector Theme | Livestream Theme | Notes / Behavior |
-| :--- | :--- | :--- | :--- | :--- |
-| **Worship** | Worship | Lyrics | Lower Third Lyrics | Full screen house lyrics; lower third overlays for the stream feed. |
-| **Segment** | Segment | Segment Intro | Lower Third Segment | Handles global environments for MCs, intros, and live transitions. |
-| **Verse FS** | Sermon FS Verse | Main Verse | Main Verse | Full-screen scripture layout sent uniformly to both outputs. |
-| **Verse LT** | Sermon LT Verse | Main Verse | Lower Third Verse | Scripture layout; lower third text block on stream over live video. |
-| **Bullets** | Sermon FS Series | Point | Point | *Mapped to Point FS.* Handles full-screen list styles and text points. |
-| **Point LT** | Sermon LT Oneliner | One Liner | Lower Third Point | Single line or lower-third sermon callouts over live video feeds. |
-| **Main Point** | Sermon Main Point | Main Point | Main Point | Structural title slides, key message emphasis, or core takeaways. |
-| **Clear: Verse** | Clear Verse | *Blocked* | *Blocked* | Instantly clears lyric/scripture text layers while holding video. |
-| **Clear Screen** | Clear | *Blocked* | *Blocked* | Total video and text blackout to establish a clean video baseline. |
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th class="th-look">Macro Button</th>
+          <th class="th-look">Underlying Look Preset</th>
+          <th class="th-stage">Stage Projector Theme</th>
+          <th class="th-live">Livestream Theme</th>
+          <th class="th-look">Notes / Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Worship</td>
+          <td><span class="badge-worship">Worship</span></td>
+          <td><span class="theme-tag">Lyrics</span></td>
+          <td><span class="theme-tag">Lower Third Lyrics</span></td>
+          <td>Full screen house lyrics; lower third overlays for the stream feed.</td>
+        </tr>
+        <tr>
+          <td>Segment</td>
+          <td><span class="badge-segment">Segment</span></td>
+          <td><span class="theme-tag">Segment Intro</span></td>
+          <td><span class="theme-tag">Lower Third Segment</span></td>
+          <td>Handles global environments for MCs, intros, and live transitions.</td>
+        </tr>
+        <tr>
+          <td>Verse FS</td>
+          <td><span class="badge-fsverse">Sermon FS Verse</span></td>
+          <td><span class="theme-tag">Main Verse</span></td>
+          <td><span class="theme-tag">Main Verse</span></td>
+          <td>Full-screen scripture layout sent uniformly to both outputs.</td>
+        </tr>
+        <tr>
+          <td>Verse LT</td>
+          <td><span class="badge-ltverse">Sermon LT Verse</span></td>
+          <td><span class="theme-tag">Main Verse</span></td>
+          <td><span class="theme-tag">Lower Third Verse</span></td>
+          <td>Scripture layout; lower third text block on stream over live video.</td>
+        </tr>
+        <tr>
+          <td>Bullets</td>
+          <td><span class="badge-points">Sermon FS Series</span></td>
+          <td><span class="theme-tag">Point</span></td>
+          <td><span class="theme-tag">Point</span></td>
+          <td>Mapped to Point FS. Handles full-screen list styles and text points.</td>
+        </tr>
+        <tr>
+          <td>Point LT</td>
+          <td><span class="badge-ltverse">Sermon LT Oneliner</span></td>
+          <td><span class="theme-tag">One Liner</span></td>
+          <td><span class="theme-tag">Lower Third Point</span></td>
+          <td>Single line or lower-third sermon callouts over live video feeds.</td>
+        </tr>
+        <tr>
+          <td>Main Point</td>
+          <td><span class="badge-mainpoint">Sermon Main Point</span></td>
+          <td><span class="theme-tag">Main Point</span></td>
+          <td><span class="theme-tag">Main Point</span></td>
+          <td>Structural title slides, key message emphasis, or core takeaways.</td>
+        </tr>
+        <tr>
+          <td>Clear: Verse</td>
+          <td><span class="badge-clear">Clear Verse</span></td>
+          <td><span class="theme-none">Blocked</span></td>
+          <td><span class="theme-none">Blocked</span></td>
+          <td>Instantly clears lyric/scripture text layers while holding background video.</td>
+        </tr>
+        <tr>
+          <td>Clear Screen</td>
+          <td><span class="badge-clear">Clear</span></td>
+          <td><span class="theme-none">Blocked</span></td>
+          <td><span class="theme-none">Blocked</span></td>
+          <td>Total video and text blackout to establish a clean video baseline.</td>
+        </tr>
+      </tbody>
+    </table>
 
----
+    <div class="section-label">4. Media Bin Background Standards</div>
+    <div class="intro-box">
+      <p>To maintain clear visual separation and reduce the chance of an operator selecting the wrong asset mid-service, the Media Bin utilizes dedicated background playlists:</p>
+      <ul style="margin-left: 1.25rem; margin-top: 0.4rem; font-size: 0.75rem;">
+        <li><strong>🖼️ Worship Background:</strong> Reserved strictly for abstract motion loops, ambient pads, and song lyrics presentation layers.</li>
+        <li><strong>📖 Verse Background:</strong> Reserved specifically for sermon aesthetic packages, scripture reading backdrops, and sermon series graphic templates.</li>
+      </ul>
+    </div>
 
-## 4. Media Bin Background Standards
+  </div>
 
-To maintain clear visual separation and reduce the chance of an operator selecting the wrong asset mid-service, the Media Bin utilizes dedicated background playlists:
+  <div class="footer">
+    <span>Victory Church of the Bay Area — Media Team Documentation</span>
+    <span class="badge-footer">PROPRESENTER 7</span>
+  </div>
 
-* **🖼️ Worship Background:** Reserved strictly for abstract motion loops, ambient pads, and song lyrics presentation layers.
-* **📖 Verse Background:** Reserved specifically for sermon aesthetic packages, scripture reading backdrops, and sermon series graphic templates.
+</div>
+</body>
+</html>
