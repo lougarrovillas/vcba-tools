@@ -8,7 +8,7 @@
         :root {
             --primary: #0f172a;
             --secondary: #1e293b;
-            --accent: #1e3a8a; /* Deep elegant blue matching church buttons */
+            --accent: #1e3a8a; 
             --accent-hover: #172554;
             --text-light: #f8fafc;
             --text-dark: #334155;
@@ -131,7 +131,6 @@
             background-color: var(--accent-hover);
         }
 
-        /* 4-Card Grid Framework */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
@@ -155,7 +154,6 @@
             display: block;
         }
 
-        /* Large Zoom Container for Every Nation Brand Logo Asset */
         .logo-zoom-container {
             height: 240px; 
             background-color: #ffffff; 
@@ -167,7 +165,7 @@
         }
 
         .logo-zoom-container img {
-            max-height: 140px; /* Zoom adjustment for larger scale rendering */
+            max-height: 140px; 
             width: auto; 
             max-width: 85%;
             object-fit: contain;
@@ -194,7 +192,6 @@
             flex-grow: 1;
         }
 
-        /* Interactive Accordion Layout Classes */
         .accordion-trigger {
             display: inline-flex;
             align-items: center;
@@ -226,7 +223,6 @@
             border-top: 1px solid var(--border-color);
         }
 
-        /* Statement of Faith Rendering Adjustments */
         .faith-intro {
             font-style: italic;
             color: #64748b;
@@ -253,7 +249,6 @@
             color: var(--text-dark);
         }
 
-        /* Core Values Layout Elements */
         .values-intro {
             font-weight: 600;
             color: #64748b;
@@ -293,7 +288,6 @@
             color: var(--text-dark);
         }
 
-        /* Pastoral Team Core Styling rules */
         .pastor-section {
             background-color: var(--bg-white);
             text-align: center;
@@ -338,13 +332,8 @@
         }
 
         @media (max-width: 900px) {
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-            .split-row, .split-row:nth-child(even) {
-                flex-direction: column;
-                gap: 2rem;
-            }
+            .info-grid { grid-template-columns: 1fr; }
+            .split-row, .split-row:nth-child(even) { flex-direction: column; gap: 2rem; }
         }
     </style>
 </head>
@@ -366,7 +355,7 @@
 
     <main class="container" id="about">
         
-        <!-- Row 1: Image Left, Text Right (Come As You Are) -->
+        <!-- Row 1 -->
         <div class="split-row">
             <div class="split-col">
                 <img src="images/worship.jpg" alt="Worship Experience" class="split-image">
@@ -377,3 +366,9 @@
             </div>
         </div>
 
+        <!-- Row 2 -->
+        <div class="split-row" id="connect">
+            <div class="split-col">
+                <h2 class="section-title">Connect & Grow Together</h2>
+                <p>Join a Victory Group to learn more about God and how to follow Him. True growth happens in circles, not just rows. Our small groups offer community, prayer support, and intentional relationship building.</p>
+                <a href="https://churchcenter.com" target="_blank" class="btn">Sign Up / Connect Form</a>
