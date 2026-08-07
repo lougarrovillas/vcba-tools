@@ -54,15 +54,11 @@
   .who-grid{display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid var(--line); margin-top:8px;}
   .who-card{border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--cream);}
   .who-card:nth-child(2n){border-right:none;}
-  
-  /* Stretches image to top edge of card */
   .who-img{height:230px; width:100%; overflow:hidden;}
   .who-img img{width:100%; height:100%; object-fit:cover; display:block;}
-  
   .who-card summary{list-style:none; cursor:pointer; display:flex; flex-direction:column; padding:0;}
   .who-card summary::-webkit-details-marker{display:none;}
   
-  /* Pushes text left and plus icon far right */
   .who-summary-header {
     display: flex !important; 
     flex-direction: row !important; 
@@ -88,7 +84,10 @@
   .who-body h5:first-child{margin-top:0;}
   .who-btn{display:inline-block; margin-top:16px; background:var(--navy); color:var(--white); text-decoration:none; font-weight:700; font-size:0.85rem; padding:11px 20px; border-radius:3px; letter-spacing:0.01em;}
 
-  @media (max-width:900px){.visit-grid{grid-template-columns:1fr;}}
+  @media (max-width:760px){
+    .who-grid{grid-template-columns:1fr;}
+    .who-card{border-right:none !important;}
+  }
   @media (max-width:700px){nav.links{display:none;}}
 </style>
 </head>
