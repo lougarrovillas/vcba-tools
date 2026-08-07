@@ -54,10 +54,10 @@
   .who-grid{display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid var(--line); margin-top:8px;}
   .who-card{border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--cream);}
   .who-card:nth-child(2n){border-right:none;}
-  .who-img{height:230px; overflow:hidden;}
-  .who-img img{width:100%; height:100%; object-fit:cover;}
-  .who-card summary{list-style:none; cursor:pointer; display:flex; flex-direction: column; align-items:stretch; justify-content:space-between; padding:0;}
-  .who-summary-header {display: flex; align-items: center; justify-content: space-betwee; padding: 20px 24px;
+  .who-img{height:230px; width:100%; overflow:hidden;}
+  .who-img img{width:100%; height:100%; object-fit:cover; display: block;}
+  .who-card summary{list-style:none; cursor:pointer; display:flex; flex-direction: column; padding:0;}
+  .who-summary-header {display: flex; align-items: center; justify-content: space-betweem; padding: 20px 24px; width:100; box-sizing: border-box;}
   .who-card summary::-webkit-details-marker{display:none;}
   .who-card summary .name{font-family:'Fraunces',serif; font-weight:600; font-size:1.15rem; color:var(--navy-deep);}
   .who-plus{
