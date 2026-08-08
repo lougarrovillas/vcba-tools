@@ -152,9 +152,20 @@
     transform: translateY(-1px);
   }
 
-  /* FOOTER */
-  footer{background:var(--navy-deep); color:rgba(255,255,255,0.65); padding:32px 0; border-top:1px solid rgba(255,255,255,0.1); text-align:center;}
-  .fine{font-size:0.85rem;}
+/* FOOTER */
+footer {
+  background: var(--navy-deep);
+  color: var(--white);
+  padding: 14px 0; /* Matches the top header's vertical padding */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.fine {
+  font-size: 0.95rem;
+  font-weight: 600; /* Bold text */
+  letter-spacing: 0.02em;
+}
 
   @media (max-width:760px){
     .who-grid{grid-template-columns:1fr;}
