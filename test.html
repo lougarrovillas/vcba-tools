@@ -80,7 +80,7 @@ header.site-nav {
 }
 
   /* HERO SECTION */
-  .hero{position:relative; min-height:55vh; display:flex; align-items:center; color:var(--white); overflow:hidden;}
+  .hero{position:relative; min-height:520px; max-height: 600px; display:flex; align-items:center; color:var(--white); overflow:hidden;}
   .hero-img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; filter:saturate(0.95);}
   .hero-overlay{position:absolute; inset:0; background:linear-gradient(180deg, rgba(15,38,80,0.45) 0%, rgba(15,38,80,0.65) 60%, rgba(15,38,80,0.92) 100%);}
   .hero-content{position:relative; z-index:2; padding:40px 24px; max-width:1120px; margin:0 auto; width:100%;}
@@ -96,7 +96,7 @@ header.site-nav {
   .hero-tagline{margin-top:32px; padding-top:24px; border-top:1px solid rgba(255,255,255,0.2); font-size:1.05rem; color:rgba(255,255,255,0.9); max-width:640px; font-family:'Fraunces',serif; font-weight:400; text-shadow:0 1px 4px rgba(0,0,0,0.4);}
 
   /* SECTIONS */
-  section{padding:88px 0;}
+  section{padding:64px 0;}
   .section-head{max-width:680px; margin-bottom:44px;}
   .section-head h2{font-size:clamp(1.7rem,3.2vw,2.4rem); margin-top:10px;}
   .section-head p.intro{margin-top:16px; color:#4a4f59; font-size:1.05rem;}
@@ -126,9 +126,6 @@ header.site-nav {
   footer{background:var(--navy-deep); color:rgba(255,255,255,0.65); padding:44px 0; border-top:1px solid rgba(255,255,255,0.1);}
   .footer-inner{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;}
   .footer-inner img{height:30px; opacity:0.9;}
-  .footer-social{display:flex; gap:18px;}
-  .footer-social a{color:rgba(255,255,255,0.75); text-decoration:none; font-size:0.9rem; font-weight:600;}
-  .footer-social a:hover{color:var(--white);}
   .fine{font-size:0.85rem;}
 
   @media (max-width:760px){
@@ -261,11 +258,6 @@ header.site-nav {
 </section>
 
 <footer>
-  <div class="wrap footer-inner">
-    <div class="footer-social">
-      <a href="https://www.facebook.com/victorybayarea" target="_blank" rel="noopener">Facebook</a>
-      <a href="https://www.instagram.com/victorybayarea" target="_blank" rel="noopener">Instagram</a>
-    </div>
     <div class="fine">&copy; 2026 Victory Church of the Bay Area </div>
   </div>
 </footer>
