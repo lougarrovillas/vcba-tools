@@ -45,6 +45,12 @@
     width: auto;
   }
 
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
   .nav-socials {
     display: flex;
     align-items: center;
@@ -68,6 +74,25 @@
   .nav-socials svg {
     width: 24px;
     height: 24px;
+  }
+
+  /* HEADER GIVE BUTTON */
+  .btn-give-header {
+    background: var(--gold);
+    color: var(--navy-deep);
+    padding: 8px 18px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    transition: background 0.2s ease, transform 0.2s ease;
+    display: inline-block;
+  }
+
+  .btn-give-header:hover {
+    background: #d9b158;
+    transform: translateY(-1px);
   }
 
   /* HERO SECTION */
@@ -186,82 +211,115 @@
     transform: translateY(-1px);
   }
 
-/* FOOTER */
-footer {
-  background: var(--navy-deep);
-  color: var(--white);
-  padding: 20px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
+  /* GIVE SECTION */
+  .give-section {
+    background: #ffffff;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
 
-.footer-inner{
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-}
+  .give-box {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+  }
 
-.footer-info{
-  font-size: 0.85rem;
-  line-height: 1.5;
-}
+  .give-quote {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    color: var(--navy-deep);
+    font-style: italic;
+    line-height: 1.6;
+    margin: 20px 0 10px 0;
+    padding: 0 10px;
+  }
 
-.footer-info .service{
-  font-weight: 700;
-  color: var(--white);
-}
+  .give-citation {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 28px;
+  }
 
-.footer-info a{
-  color: rgba(255,255,255,0.75);
-  text-decoration: none;
-}
+  /* FOOTER */
+  footer {
+    background: var(--navy-deep);
+    color: var(--white);
+    padding: 20px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
 
-.footer-info a:hover{
-  color: var(--gold);
-  text-decoration: underline;
-}
+  .footer-inner{
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
 
-.footer-copy{
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.65);
-  text-align: center;
-  flex: 1 1 auto;
-}
+  .footer-info{
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
 
-.footer-socials{
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
+  .footer-info .service{
+    font-weight: 700;
+    color: var(--white);
+  }
 
-.footer-socials a{
-  color: var(--white);
-  opacity: 0.85;
-  display: flex;
-  align-items: center;
-  transition: opacity 0.2s, transform 0.2s;
-}
+  .footer-info a{
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+  }
 
-.footer-socials a:hover{
-  color: var(--gold);
-  opacity: 1;
-  transform: translateY(-1px);
-}
+  .footer-info a:hover{
+    color: var(--gold);
+    text-decoration: underline;
+  }
 
-.footer-socials svg{
-  width: 20px;
-  height: 20px;
-}
+  .footer-copy{
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.65);
+    text-align: center;
+    flex: 1 1 auto;
+  }
+
+  .footer-socials{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .footer-socials a{
+    color: var(--white);
+    opacity: 0.85;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .footer-socials a:hover{
+    color: var(--gold);
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+
+  .footer-socials svg{
+    width: 20px;
+    height: 20px;
+  }
 
   @media (max-width:760px){
     .who-grid{grid-template-columns:1fr;}
     .who-card{border-right:none !important;}
     .footer-inner{flex-direction:column; text-align:center;}
     .footer-copy{order:3;}
+    .nav-right{gap: 12px;}
   }
 
   /* BACK TO TOP */
@@ -308,19 +366,23 @@ footer {
       <img src="logo-white.png" alt="Victory Church Logo">
     </a>
 
-    <div class="nav-socials">
-      <!-- FB Icon -->
-      <a href="https://www.facebook.com/victorybayarea" target="_blank" rel="noopener" aria-label="Facebook">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-      </a>
-      <!-- Instagram Icon -->
-      <a href="https://www.instagram.com/victorybayarea" target="_blank" rel="noopener" aria-label="Instagram">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-      </a>
-      <!-- YouTube Icon -->
-      <a href="https://www.youtube.com/@VictoryBayArea" target="_blank" rel="noopener" aria-label="YouTube">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.42a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.42 8.6.42 8.6.42s6.88 0 8.6-.42a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
-      </a>
+    <div class="nav-right">
+      <div class="nav-socials">
+        <!-- FB Icon -->
+        <a href="https://www.facebook.com/victorybayarea" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <!-- Instagram Icon -->
+        <a href="https://www.instagram.com/victorybayarea" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <!-- YouTube Icon -->
+        <a href="https://www.youtube.com/@VictoryBayArea" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.42a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.42 8.6.42 8.6.42s6.88 0 8.6-.42a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+        </a>
+      </div>
+
+      <a href="https://pushpay.com/g/victoryus" target="_blank" rel="noopener" class="btn-give-header">Give</a>
     </div>
   </div>
 </header>
@@ -444,6 +506,24 @@ footer {
         </div>
       </details>
 
+    </div>
+  </div>
+</section>
+
+<!-- DEDICATED GIVE SECTION -->
+<section id="give" class="give-section">
+  <div class="wrap">
+    <div class="give-box">
+      <span class="eyebrow">Generosity</span>
+      <h2>Partner With Us</h2>
+      <p class="intro">Through your generosity, you are partnering with us in our mission to honor God and make disciples.</p>
+      
+      <blockquote class="give-quote">
+        "You will be enriched in every way so that you can be generous on every occasion, and through us your generosity will result in thanksgiving to God."
+      </blockquote>
+      <div class="give-citation">— 2 Corinthians 9:11 (NIV)</div>
+
+      <a class="btn-primary" href="https://pushpay.com/g/victoryus" target="_blank" rel="noopener">Give Online</a>
     </div>
   </div>
 </section>
